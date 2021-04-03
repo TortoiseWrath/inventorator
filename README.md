@@ -55,7 +55,9 @@ source venv/bin/activate
 pip install -r requirements.txt
 
 # Install npm dependencies
+cd client
 npm install
+cd ..
 
 # Load the database schema
 mysql -u inventorator_flask -p inventorator < schema.sql
