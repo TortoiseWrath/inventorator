@@ -1,5 +1,5 @@
 <template>
-  <item-list parent="0"/>
+  <item-list parent="1"/>
 </template>
 
 <script lang="ts">
