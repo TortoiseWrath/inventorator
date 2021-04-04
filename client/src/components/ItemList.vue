@@ -1,16 +1,40 @@
 <template>
   <ul>
     <li v-for="(item, index) in items" :key="index">
-      <button v-if="item.childCount" @click="item.expanded = true">Expand</button>
-      <div v-else class="spacer"/>
-      <div class="title">{{ item.title }}</div>
-      <div class="childCount">{{ item.childCount }}</div>
-      <div class="value">{{ item.value }}</div>
-      <div class="weight">{{ item.weight }}</div>
-      <div class="volume">{{ item.volume }}</div>
-      <button class="add">Add Children</button>
-      <button class="edit">Edit</button>
-      <button class="delete">Delete</button>
+      <div class="left">
+        <button v-if="item.childCount" v-show="!item.expanded" @click="item.expanded = true" class="expand">
+          Expand
+        </button>
+        <button v-if="item.childCount" v-show="item.expanded" @click="item.expanded = false" class="contract">
+          Contract
+        </button>
+        <div v-if="!item.childCount" class="spacer"/>
+
+        <!-- TODO: Add checkboxes -->
+
+        <div class="title">{{ item.title }}</div>
+      </div>
+      <div class="right">
+        <div class="childCount">{{ item.childCount }}</div>
+
+        <div class="value">{{ item.totalValue }}</div>
+        <!-- TODO: Show value details on hovering value -->
+
+        <div v-bind:class="['weight', {'warning': item.weight < item.totalWeight}]">
+          {{ item.totalWeight }}
+        </div>
+        <!-- TODO: Show weight details on hovering weight -->
+
+        <div v-bind:class="['volume', {'warning': item.volume < item.totalVolume}]">
+          {{ item.totalVolume }}
+        </div>
+        <!-- TODO: Show volume details on hovering volume -->
+
+        <!-- https://medium.com/@rmmmsy/creating-and-animating-a-modal-component-as-a-child-route-using-vue-41a275a51d0c -->
+        <button class="add">Add Children</button> <!-- TODO: Add children modal -->
+        <button class="edit">Edit</button> <!-- TODO: Edit item modal -->
+        <button class="delete">Delete</button> <!-- TODO: Delete item -->
+      </div>
       <item-list v-if="item.expanded" v-bind:parent="item.id"/>
     </li>
   </ul>
@@ -25,6 +49,9 @@ type Item = {
   value: number,
   weight: number,
   volume: number,
+  totalValue: number,
+  totalWeight: number,
+  totalVolume: number,
   id: string,
   expanded?: boolean // null at first, then true or false later on
 }
@@ -44,7 +71,8 @@ export default defineComponent({
   },
   methods: {
     load() {
-      fetch(`http://localhost:5000/items/${this.parent}`).then(response => response.json()).then(data => this.items = data.items);
+      fetch(`http://localhost:5000/items/${this.parent}`).then(response => response.json())
+          .then(data => this.items = data.items);
     },
   },
   created() {
