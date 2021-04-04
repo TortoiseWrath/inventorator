@@ -29,6 +29,11 @@ sudo mysql_secure_installation
 
 # Install Vue CLI
 npm i -g @vue/cli
+
+# You may need to increase fs.inotify.max_user_watches.
+# See: https://stackoverflow.com/q/53930305
+echo fs.inotify.max_user_watches=524288 | sudo tee /etc/sysctl.d/10-user-watches.conf
+sudo sysctl --system
 ```
 
 Create a database and user at the MySQL prompt (`sudo mysql`):
@@ -62,3 +67,7 @@ cd ..
 # Load the database schema
 mysql -u inventorator_flask -p inventorator < schema.sql
 ```
+
+Run the Flask server at http://localhost:5000/ with `python app.py`.
+
+Run the Node server at http://localhost:8080/ with `cd client && npm run serve`.
