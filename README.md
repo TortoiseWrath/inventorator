@@ -66,8 +66,12 @@ cd ..
 
 # Load the database schema
 mysql -u inventorator_flask -p inventorator < schema.sql
+
+# Update the database configuration
+$EDITOR config.py
 ```
 
 Run the Flask server at http://localhost:5000/ with `python app.py`.
 
 Run the Node server at http://localhost:8080/ with `cd client && npm run serve`.
+
