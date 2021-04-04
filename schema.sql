@@ -25,7 +25,7 @@ DROP TABLE IF EXISTS `items`;
 CREATE TABLE `items` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `parent` int(10) unsigned NOT NULL DEFAULT 0,
-  `title` tinytext NOT NULL,
+  `title` tinytext DEFAULT NULL,
   `description` text DEFAULT NULL,
   `acquired` date DEFAULT NULL,
   `basis` decimal(10,2) unsigned DEFAULT NULL COMMENT 'USD',
@@ -40,7 +40,8 @@ CREATE TABLE `items` (
   KEY `items_items_id_fk` (`parent`),
   CONSTRAINT `items_items_id_fk` FOREIGN KEY (`parent`) REFERENCES `items` (`id`),
   CONSTRAINT `valued_after_acquired` CHECK (`value_as_of` is null or `acquired` is null or `value_as_of` > `acquired`),
-  CONSTRAINT `created_after_acquired` CHECK (`created` is null or `acquired` is null or `created` > `acquired`)
+  CONSTRAINT `created_after_acquired` CHECK (`created` is null or `acquired` is null or `created` > `acquired`),
+  CONSTRAINT `values_have_dates` CHECK (`value` is null and `value_as_of` is null or `value` is not null and `value_as_of` is not null)
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -109,6 +110,7 @@ CREATE TABLE `links` (
   `link_id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `item` int(10) unsigned NOT NULL,
   `target` mediumtext NOT NULL,
+  `sort` tinyint(3) unsigned NOT NULL DEFAULT 0,
   PRIMARY KEY (`link_id`),
   KEY `links_items_id_fk` (`item`),
   CONSTRAINT `links_items_id_fk` FOREIGN KEY (`item`) REFERENCES `items` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
@@ -296,4 +298,4 @@ DELIMITER ;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2021-04-04  0:46:43
+-- Dump completed on 2021-04-04 17:52:32
