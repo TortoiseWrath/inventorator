@@ -5,8 +5,8 @@
         <button v-if="item.childCount" v-show="!item.expanded" @click="item.expanded = true" class="expand">
           Expand
         </button>
-        <button v-if="item.childCount" v-show="item.expanded" @click="item.expanded = false" class="contract">
-          Contract
+        <button v-if="item.childCount" v-show="item.expanded" @click="item.expanded = false" class="collapse">
+          Collapse
         </button>
         <div v-if="!item.childCount" class="spacer"/>
 
