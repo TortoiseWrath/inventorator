@@ -3,13 +3,12 @@
     <li v-for="(item, index) in items" :key="index">
       <div class="left">
 
-        <button v-if="item.childCount" v-show="!item.expanded" @click="item.expanded = true" class="expand">
-          Expand
-        </button>
-        <button v-if="item.childCount" v-show="item.expanded" @click="item.expanded = false" class="collapse">
-          Collapse
-        </button>
+        <font-awesome-icon icon="caret-right" v-if="item.childCount"
+                           @click="item.expanded = !item.expanded"
+                           :class="item.expanded ? 'collapse' : 'expand'"/>
         <div v-if="!item.childCount" class="spacer"/>
+        <!-- TODO: Add hover transition to buttons -->
+        <!-- TODO: Add rotation transition to expand/collapse buttons -->
 
         <!-- TODO: Add checkboxes -->
         <!-- TODO: Add photo preview to items list -->
@@ -17,33 +16,35 @@
         <div class="title">{{ item.title }}</div>
       </div>
       <div class="right">
-        <div class="childCount">{{ item.childCount }}</div>
+        <div :class="['childCount', {'decorated': item.childCount}]">{{ item.childCount }}</div>
 
-        <div class="value">{{ item.totalValue }}</div>
+        <div :class="['value', {'decorated': item.totalValue}]">{{ item.totalValue }}</div>
         <!-- TODO: Show value details on hovering value -->
 
-        <div v-bind:class="['weight', {'warning': lt(item.weight, item.totalWeight)}]">
-          {{ item.totalWeight }} <!-- TODO: Add weight conversions -->
+        <div :class="['weight', {'warning': lt(item.weight, item.totalWeight), 'decorated': item.weight}]">
+          {{ item.weight }} <!-- TODO: Add weight conversions -->
         </div>
         <!-- TODO: Show weight details on hovering weight -->
 
-        <div v-bind:class="['volume', {'warning': lt(item.volume, item.totalVolume)}]">
-          {{ item.totalVolume }} <!-- TODO: Add volume conversions -->
+        <div :class="['volume', {'warning': lt(item.volume, item.totalVolume), 'decorated': item.volume}]">
+          {{ item.volume }} <!-- TODO: Add volume conversions -->
         </div>
         <!-- TODO: Show volume details on hovering volume -->
 
-        <!-- https://medium.com/@rmmmsy/creating-and-animating-a-modal-component-as-a-child-route-using-vue-41a275a51d0c -->
-        <button class="add">Add Children</button> <!-- TODO: Add children modal -->
-        <button class="edit">Edit</button> <!-- TODO: Edit item modal -->
-        <button class="delete">Delete</button> <!-- TODO: Delete item -->
+        <font-awesome-icon icon="plus" class="add"/> <!-- TODO: Add children -->
+        <font-awesome-icon icon="pen" class="edit"/> <!-- TODO: Edit item -->
+        <font-awesome-icon icon="trash-alt" class="delete"/> <!-- TODO: Delete item modal -->
+        <!-- TODO: Add tooltips to buttons -->
       </div>
-      <item-list v-if="item.expanded != null" v-show="item.expanded" v-bind:parent="item.id"/>
+      <item-list v-if="item.expanded != null" v-show="item.expanded" :parent="item.id"/>
+      <!-- TODO: Add transition for show/hide children -->
     </li>
   </ul>
 </template>
 
 <script lang="ts">
 import {defineComponent} from 'vue';
+import {FontAwesomeIcon} from '@/plugins/font-awesome';
 
 type Item = {
   title: string,
@@ -56,7 +57,7 @@ type Item = {
   totalVolume?: string,
   id: number,
   parent: number,
-  expanded?: boolean // null at first, then true or false later on
+  expanded?: boolean // null at first, then true or false after first expanded
 }
 
 export default defineComponent({
@@ -66,16 +67,28 @@ export default defineComponent({
       items: [] as Item[],
     };
   },
+  components: {
+    FontAwesomeIcon,
+  },
   props: {
     parent: {
       type: Number,
       required: true,
     },
+    expand: {
+      type: Boolean,
+      required: false,
+    },
   },
   methods: {
     load() {
       fetch(`http://localhost:5000/items/${this.parent}`).then(response => response.json())
-          .then(data => this.items = data.items);
+          .then(data => {
+            this.items = data.items;
+            if (this.expand && this.items[0]?.childCount) {
+              this.items[0].expanded = true;
+            }
+          });
     },
     lt(a: string | null, b: string | null): boolean {
       return a !== null && b !== null && parseFloat(a) < parseFloat(b);
@@ -88,5 +101,123 @@ export default defineComponent({
 </script>
 
 <style scoped lang="scss">
+$indent: 1em;
+$child-count-width: 4em;
+$decimal-width: 8em;
+$extra-width: 2 * $indent;
+$right-width: 6 * $indent + $extra-width + $child-count-width + 3 * $decimal-width;
+// TODO: Hide decimals on mobile
 
+ul {
+  list-style: none;
+  display: inline-block;
+  background-color: $debug-background;
+  padding-left: $indent;
+  width: 100%;
+  max-width: 13in;
+  box-sizing: border-box;
+
+  > li {
+    display: block;
+    width: 100%;
+    text-align: left;
+
+    > div {
+      height: 2rem;
+      vertical-align: top;
+      display: inline-flex;
+      align-items: center;
+
+      div {
+        margin-bottom: -.3em; // Shift text down slightly to account for space below baseline
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+
+      > * {
+        display: inline-block;
+      }
+
+      &.left {
+        width: calc(100% - #{$indent} - #{$right-width});
+
+        .expand, .collapse, div.spacer {
+          width: $indent * 1.5;
+          height: $indent * 1.5;
+          vertical-align: middle;
+          flex-shrink: 0;
+        }
+
+        .collapse {
+          transform: rotate(90deg);
+        }
+
+        .expand, .collapse {
+          &:hover {
+            cursor: pointer;
+            color: $hover;
+          }
+        }
+      }
+
+      &.left:hover + .right, &.right:hover {
+        .add, .edit, .delete {
+          opacity: 1; // TODO: Add a transition to fade buttons in/out on hover
+        }
+      }
+
+      &.right {
+        width: $right-width;
+        justify-content: flex-end;
+
+        .add, .edit, .delete {
+          height: $indent;
+          margin-left: $indent;
+          flex-shrink: 0;
+          opacity: 0;
+
+          &:hover { // TODO: Make sure this is usable on mobile
+            cursor: pointer;
+            color: $hover;
+          }
+        }
+
+        .delete {
+          color: $danger;
+
+          &:hover {
+            color: $danger-hover;
+          }
+        }
+
+        > div {
+          width: $decimal-width;
+          text-align: right;
+
+          &.childCount {
+            width: $child-count-width;
+          }
+
+          &.decorated {
+            &.childCount::before {
+              content: "+";
+            }
+
+            &.value::before {
+              content: "$";
+            }
+
+            &.weight::after {
+              content: " oz";
+            }
+
+            &.volume::after {
+              content: " in³";
+            }
+          }
+        }
+      }
+    }
+  }
+}
 </style>
