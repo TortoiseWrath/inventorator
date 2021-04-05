@@ -32,7 +32,9 @@
         <!-- TODO: Show volume details on hovering volume -->
 
         <font-awesome-icon icon="plus" class="add"/> <!-- TODO: Add children -->
-        <font-awesome-icon icon="pen" class="edit"/> <!-- TODO: Edit item -->
+        <router-link :to="{ path: `/item/${item.id}`}">
+          <font-awesome-icon icon="pen" class="edit"/>
+        </router-link>
         <font-awesome-icon icon="trash-alt" class="delete"/> <!-- TODO: Delete item modal -->
         <!-- TODO: Add tooltips to buttons -->
       </div>
@@ -45,20 +47,8 @@
 <script lang="ts">
 import {defineComponent} from 'vue';
 import {FontAwesomeIcon} from '@/plugins/font-awesome';
-
-type Item = {
-  title: string,
-  childCount: number,
-  value?: string,
-  weight?: string,
-  volume?: string,
-  totalValue?: string,
-  totalWeight?: string,
-  totalVolume?: string,
-  id: number,
-  parent: number,
-  expanded?: boolean // null at first, then true or false after first expanded
-}
+import {Item} from '@/types/Item';
+import {Decimal} from '@/types/Decimal';
 
 export default defineComponent({
   name: 'ItemList',
@@ -90,8 +80,8 @@ export default defineComponent({
             }
           });
     },
-    lt(a: string | null, b: string | null): boolean {
-      return a !== null && b !== null && parseFloat(a) < parseFloat(b);
+    lt(a: Decimal | null, b: Decimal | null): boolean {
+      return a !== null && b !== null && a.value() < b.value();
     },
   },
   created() {
@@ -175,8 +165,9 @@ ul {
           margin-left: $indent;
           flex-shrink: 0;
           opacity: 0;
+          color: $body;
 
-          &:hover { // TODO: Make sure this is usable on mobile
+          &:hover { // TODO: Make sure hover is usable on mobile
             cursor: pointer;
             color: $hover;
           }
