@@ -111,6 +111,7 @@ CREATE TABLE `links` (
   `item` int(10) unsigned NOT NULL,
   `target` mediumtext NOT NULL,
   `sort` tinyint(3) unsigned NOT NULL DEFAULT 0,
+  `title` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`link_id`),
   KEY `links_items_id_fk` (`item`),
   CONSTRAINT `links_items_id_fk` FOREIGN KEY (`item`) REFERENCES `items` (`id`) ON DELETE CASCADE ON UPDATE CASCADE

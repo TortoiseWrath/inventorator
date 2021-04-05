@@ -2,6 +2,7 @@
   <ul>
     <li v-for="(item, index) in items" :key="index">
       <div class="left">
+
         <button v-if="item.childCount" v-show="!item.expanded" @click="item.expanded = true" class="expand">
           Expand
         </button>
@@ -11,6 +12,7 @@
         <div v-if="!item.childCount" class="spacer"/>
 
         <!-- TODO: Add checkboxes -->
+        <!-- TODO: Add photo preview to items list -->
 
         <div class="title">{{ item.title }}</div>
       </div>
