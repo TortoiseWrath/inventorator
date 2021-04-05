@@ -38,7 +38,7 @@ CREATE TABLE `items` (
   `upc` tinytext DEFAULT NULL,
   `created` datetime NOT NULL DEFAULT current_timestamp() COMMENT 'When this row was created',
   `modified` datetime NOT NULL DEFAULT current_timestamp() COMMENT 'When this row was last modified',
-  `volume` decimal(10,4) unsigned GENERATED ALWAYS AS (`d1`*`d2`*`d3`) COMMENT 'in^3',
+  `volume` decimal(10,4) unsigned GENERATED ALWAYS AS (`d1` * `d2` * `d3`) STORED COMMENT 'in^3',
   PRIMARY KEY (`id`),
   KEY `items_items_id_fk` (`parent`),
   CONSTRAINT `items_items_id_fk` FOREIGN KEY (`parent`) REFERENCES `items` (`id`),
@@ -47,7 +47,7 @@ CREATE TABLE `items` (
   CONSTRAINT `values_have_dates` CHECK (`value` is null and `value_as_of` is null or `value` is not null and `value_as_of` is not null),
   CONSTRAINT `d1_and_d2` CHECK (`d1` is null and `d2` is null or `d1` is not null and `d2` is not null),
   CONSTRAINT `d3_is_3rd` CHECK (`d3` is null or `d1` is not null and `d2` is not null)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -56,7 +56,7 @@ CREATE TABLE `items` (
 
 LOCK TABLES `items` WRITE;
 /*!40000 ALTER TABLE `items` DISABLE KEYS */;
-INSERT INTO `items` VALUES (0,0,'God node',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,DEFAULT,DEFAULT),(1,0,'Root node',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,DEFAULT,DEFAULT);
+INSERT INTO `items` VALUES (0,0,'God node',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,DEFAULT,DEFAULT,DEFAULT),(1,0,'Root node',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,DEFAULT,DEFAULT,DEFAULT),(2,1,'Everything',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,DEFAULT,DEFAULT,DEFAULT);
 /*!40000 ALTER TABLE `items` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!50003 SET @saved_cs_client      = @@character_set_client */ ;
@@ -87,16 +87,9 @@ SET character_set_client = utf8;
   `id` tinyint NOT NULL,
   `parent` tinyint NOT NULL,
   `title` tinyint NOT NULL,
-  `description` tinyint NOT NULL,
-  `acquired` tinyint NOT NULL,
-  `basis` tinyint NOT NULL,
   `value` tinyint NOT NULL,
-  `value_as_of` tinyint NOT NULL,
   `weight` tinyint NOT NULL,
   `volume` tinyint NOT NULL,
-  `upc` tinyint NOT NULL,
-  `created` tinyint NOT NULL,
-  `modified` tinyint NOT NULL,
   `total_value` tinyint NOT NULL,
   `child_count` tinyint NOT NULL,
   `total_weight` tinyint NOT NULL,
@@ -304,4 +297,4 @@ DELIMITER ;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2021-04-04 17:52:32
+-- Dump completed on 2021-04-05  0:08:38
