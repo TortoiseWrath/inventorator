@@ -23,12 +23,12 @@
         <!-- TODO: Show value details on hovering value -->
 
         <div v-bind:class="['weight', {'warning': lt(item.weight, item.totalWeight)}]">
-          {{ item.totalWeight }}
+          {{ item.totalWeight }} <!-- TODO: Add weight conversions -->
         </div>
         <!-- TODO: Show weight details on hovering weight -->
 
         <div v-bind:class="['volume', {'warning': lt(item.volume, item.totalVolume)}]">
-          {{ item.totalVolume }}
+          {{ item.totalVolume }} <!-- TODO: Add volume conversions -->
         </div>
         <!-- TODO: Show volume details on hovering volume -->
 
@@ -37,7 +37,7 @@
         <button class="edit">Edit</button> <!-- TODO: Edit item modal -->
         <button class="delete">Delete</button> <!-- TODO: Delete item -->
       </div>
-      <item-list v-if="item.expanded !== null" v-show="item.expanded" v-bind:parent="item.id"/>
+      <item-list v-if="item.expanded != null" v-show="item.expanded" v-bind:parent="item.id"/>
     </li>
   </ul>
 </template>
@@ -54,7 +54,8 @@ type Item = {
   totalValue?: string,
   totalWeight?: string,
   totalVolume?: string,
-  id: string,
+  id: number,
+  parent: number,
   expanded?: boolean // null at first, then true or false later on
 }
 
@@ -67,7 +68,7 @@ export default defineComponent({
   },
   props: {
     parent: {
-      type: String,
+      type: Number,
       required: true,
     },
   },

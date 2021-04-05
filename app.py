@@ -35,8 +35,7 @@ def query(sql: str, *values):
 
 @app.route('/items/<parent>', methods=['GET'])
 def get_children(parent):
-    sql = 'SELECT id, title, child_count, value, weight, volume, total_value, total_weight, total_volume ' \
-          'FROM items_with_sums WHERE parent=%s'
+    sql = 'SELECT * FROM items_with_sums WHERE parent=%s'
     return jsonify({'items': query(sql, parent)})
 
 
