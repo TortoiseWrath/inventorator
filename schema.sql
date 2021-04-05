@@ -32,16 +32,21 @@ CREATE TABLE `items` (
   `value` decimal(10,2) unsigned DEFAULT NULL COMMENT 'USD',
   `value_as_of` date DEFAULT NULL,
   `weight` decimal(10,2) unsigned DEFAULT NULL COMMENT 'oz',
-  `volume` decimal(10,4) unsigned DEFAULT NULL COMMENT 'in^3',
+  `d1` decimal(10,4) unsigned DEFAULT NULL COMMENT 'in',
+  `d2` decimal(10,4) unsigned DEFAULT NULL COMMENT 'in',
+  `d3` decimal(10,4) unsigned DEFAULT NULL COMMENT 'in',
   `upc` tinytext DEFAULT NULL,
   `created` datetime NOT NULL DEFAULT current_timestamp() COMMENT 'When this row was created',
   `modified` datetime NOT NULL DEFAULT current_timestamp() COMMENT 'When this row was last modified',
+  `volume` decimal(10,4) unsigned GENERATED ALWAYS AS (`d1`*`d2`*`d3`) COMMENT 'in^3',
   PRIMARY KEY (`id`),
   KEY `items_items_id_fk` (`parent`),
   CONSTRAINT `items_items_id_fk` FOREIGN KEY (`parent`) REFERENCES `items` (`id`),
   CONSTRAINT `valued_after_acquired` CHECK (`value_as_of` is null or `acquired` is null or `value_as_of` > `acquired`),
   CONSTRAINT `created_after_acquired` CHECK (`created` is null or `acquired` is null or `created` > `acquired`),
-  CONSTRAINT `values_have_dates` CHECK (`value` is null and `value_as_of` is null or `value` is not null and `value_as_of` is not null)
+  CONSTRAINT `values_have_dates` CHECK (`value` is null and `value_as_of` is null or `value` is not null and `value_as_of` is not null),
+  CONSTRAINT `d1_and_d2` CHECK (`d1` is null and `d2` is null or `d1` is not null and `d2` is not null),
+  CONSTRAINT `d3_is_3rd` CHECK (`d3` is null or `d1` is not null and `d2` is not null)
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -285,7 +290,7 @@ DELIMITER ;
 /*!50001 SET character_set_results     = utf8mb4 */;
 /*!50001 SET collation_connection      = utf8mb4_general_ci */;
 /*!50001 CREATE ALGORITHM=UNDEFINED */
-/*!50001 VIEW `items_with_sums` AS select `it`.`id` AS `id`,`it`.`parent` AS `parent`,`it`.`title` AS `title`,`it`.`description` AS `description`,`it`.`acquired` AS `acquired`,`it`.`basis` AS `basis`,`it`.`value` AS `value`,`it`.`value_as_of` AS `value_as_of`,`it`.`weight` AS `weight`,`it`.`volume` AS `volume`,`it`.`upc` AS `upc`,`it`.`created` AS `created`,`it`.`modified` AS `modified`,`total_value`(`it`.`id`) AS `total_value`,(select count(`items`.`id`) from `items` where `items`.`parent` = `it`.`id`) AS `child_count`,(select sum(`items`.`weight`) from `items` where `items`.`parent` = `it`.`id`) AS `total_weight`,(select sum(`items`.`volume`) from `items` where `items`.`parent` = `it`.`id`) AS `total_volume` from `items` `it` */;
+/*!50001 VIEW `items_with_sums` AS select `it`.`id` AS `id`,`it`.`parent` AS `parent`,`it`.`title` AS `title`,`it`.`value` AS `value`,`it`.`weight` AS `weight`,`it`.`volume` AS `volume`,`total_value`(`it`.`id`) AS `total_value`,(select count(`items`.`id`) from `items` where `items`.`parent` = `it`.`id`) AS `child_count`,(select sum(`items`.`weight`) from `items` where `items`.`parent` = `it`.`id`) AS `total_weight`,(select sum(`items`.`volume`) from `items` where `items`.`parent` = `it`.`id`) AS `total_volume` from `items` `it` */;
 /*!50001 SET character_set_client      = @saved_cs_client */;
 /*!50001 SET character_set_results     = @saved_cs_results */;
 /*!50001 SET collation_connection      = @saved_col_connection */;
