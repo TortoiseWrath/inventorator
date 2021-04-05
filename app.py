@@ -1,3 +1,7 @@
+from decimal import Decimal
+
+import stringcase
+
 from config import db_config
 from flask import Flask, jsonify
 from flask_cors import CORS
@@ -17,14 +21,23 @@ conn = mysql.connect()
 cursor = conn.cursor()
 
 
+def convert_value(value: object):
+    if isinstance(value, Decimal):
+        return str(value)
+    return value
+
+
+def query(sql: str, *values):
+    cursor.execute(sql, values)
+    return [dict((stringcase.camelcase(key), convert_value(value)) for key, value in rows.items()) for rows in
+            cursor.fetchall()]
+
+
 @app.route('/items/<parent>', methods=['GET'])
 def get_children(parent):
-    parent = int(parent)
-    sql = 'SELECT id, title, child_count AS childCount, value, weight, volume, total_value AS totalValue, ' \
-          'total_weight AS totalWeight, total_volume AS totalVolume FROM items_with_sums WHERE id=%d'
-    cursor.execute(sql, (parent,))
-    result = cursor.fetchall()
-    return jsonify({'items': result})
+    sql = 'SELECT id, title, child_count, value, weight, volume, total_value, total_weight, total_volume ' \
+          'FROM items_with_sums WHERE parent=%s'
+    return jsonify({'items': query(sql, parent)})
 
 
 if __name__ == '__main__':
