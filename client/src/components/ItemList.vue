@@ -35,7 +35,7 @@
         <button class="edit">Edit</button> <!-- TODO: Edit item modal -->
         <button class="delete">Delete</button> <!-- TODO: Delete item -->
       </div>
-      <item-list v-if="item.expanded" v-bind:parent="item.id"/>
+      <item-list v-if="item.expanded !== null" v-show="item.expanded" v-bind:parent="item.id"/>
     </li>
   </ul>
 </template>
