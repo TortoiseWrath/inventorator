@@ -1,5 +1,5 @@
 <template>
-  <item-list parent="1"/>
+  <item-list :parent="1" :expand="true"/>
 </template>
 
 <script lang="ts">
