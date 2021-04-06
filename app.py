@@ -39,6 +39,12 @@ def get_children(parent):
     return jsonify({'items': query(sql, parent)})
 
 
+@app.route('/items', methods=['GET'])
+def all_items():
+    sql = 'SELECT id, title FROM items WHERE id > 1'
+    return jsonify({'items': query(sql)})
+
+
 @app.route('/details/<item>', methods=['GET'])
 def get_details(item):
     sql = 'SELECT * FROM items WHERE id=%s'
