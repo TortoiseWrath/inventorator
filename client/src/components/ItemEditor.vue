@@ -16,7 +16,7 @@
       <textarea v-model="item.description" maxlength="65535"/>
     </label>
     <label class="acquired"><span>Acquired</span>
-      <input v-model="item.acquired"/> <!-- TODO: Use date inputs in item editor -->
+      <date-string-selector v-model="item.acquired"/>
     </label>
     <label class="basis"><span>Cost basis</span>
       <input v-model="item.basis" maxlength="11" pattern="\d*(\.\d*)?"/>
@@ -26,7 +26,7 @@
       <!-- TODO: Allow arithmetic expressions in item editor -->
     </label>
     <label class="valueAsOf"><span>as of</span>
-      <input v-model="item.valueAsOf"/>
+      <date-string-selector v-model="item.valueAsOf"/>
     </label>
     <label class="weight"><span>Weight</span>
       <input v-model="item.weight" maxlength="11" pattern="\d*(\.\d*)?"/>
@@ -64,13 +64,15 @@
 </template>
 
 <script lang="ts">
-import {defineComponent, PropType} from 'vue';
+import {defineComponent} from 'vue';
 import {FontAwesomeIcon} from '@/plugins/font-awesome';
 import {ItemDetails} from '@/types/ItemDetails';
 import {Item} from '@/types/Item';
+import DateStringSelector from '@/components/DateStringSelector.vue';
 
 export default defineComponent({
   name: 'ItemEditor',
+  components: {DateStringSelector},
   data() {
     return {
       item: {parent: this.parent ? parseInt(this.parent) : null} as ItemDetails,
