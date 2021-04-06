@@ -3,7 +3,7 @@ from decimal import Decimal
 import stringcase
 
 from config import db_config
-from flask import Flask, jsonify
+from flask import Flask, jsonify, request
 from flask_cors import CORS
 from flaskext.mysql import MySQL
 from pymysql.cursors import DictCursor
@@ -49,6 +49,18 @@ def all_items():
 def get_details(item):
     sql = 'SELECT * FROM items WHERE id=%s'
     return jsonify({'item': query(sql, item)[0]})
+
+
+@app.route('/item/<item>', methods=['PUT'])
+def update_item(item):
+    post_data = request.get_json()
+    sql = 'UPDATE items SET parent=%s, title=%s, description=%s, acquired=%s, basis=%s, value=%s, value_as_of=%s, ' \
+          'weight=%s, d1=%s, d2=%s, d3=%s, upc=%s WHERE id=%s'
+    cursor.execute(sql, (post_data.get('parent'), post_data.get('title'), post_data.get('description'),
+                         post_data.get('acquired'), post_data.get('basis'), post_data.get('value'),
+                         post_data.get('valueAsOf'), post_data.get('weight'), post_data.get('d1'),
+                         post_data.get('d2'), post_data.get('d3'), post_data.get('upc'), item))
+    return "Did it?"
 
 
 if __name__ == '__main__':
