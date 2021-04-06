@@ -13,6 +13,6 @@ export interface ItemDetails extends Item {
     d3?: Decimal,
     photos?: string[],
     links?: Link[],
-    created: string,
-    modified: string,
+    created?: string,
+    modified?: string,
 }
