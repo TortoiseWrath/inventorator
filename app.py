@@ -80,6 +80,24 @@ def update_item(item):
     return jsonify({}), 200
 
 
+@app.route('/item', methods=['POST'])
+def add_item():
+    post_data = request.get_json()
+    q = 'INSERT INTO items VALUES (DEFAULT, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, DEFAULT, DEFAULT, DEFAULT)'
+    cursor = get_cursor()
+    try:
+        cursor.execute(q, get_fields(post_data, 'parent', 'title', 'description', 'acquired', 'basis', 'value',
+                                     'valueAsOf', 'weight', 'd1', 'd2', 'd3', 'upc'))
+        item_id = cursor.lastrowid
+    except DatabaseError as e:
+        return jsonify({'error': e.args}), 400
+    try:
+        add_photos(cursor, item_id, post_data.get('photos'))
+    except DatabaseError as e:
+        return jsonify({'error': e.args, 'id': item_id}), 500
+    return jsonify({'id': item_id})
+
+
 def add_photos(cursor, item, photos):
     if photos is None:
         return
