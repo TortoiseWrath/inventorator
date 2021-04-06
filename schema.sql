@@ -42,8 +42,8 @@ CREATE TABLE `items` (
   PRIMARY KEY (`id`),
   KEY `items_items_id_fk` (`parent`),
   CONSTRAINT `items_items_id_fk` FOREIGN KEY (`parent`) REFERENCES `items` (`id`),
-  CONSTRAINT `valued_after_acquired` CHECK (`value_as_of` is null or `acquired` is null or `value_as_of` > `acquired`),
-  CONSTRAINT `created_after_acquired` CHECK (`created` is null or `acquired` is null or `created` > `acquired`),
+  CONSTRAINT `valued_after_acquired` CHECK (`value_as_of` is null or `acquired` is null or `value_as_of` >= `acquired`),
+  CONSTRAINT `created_after_acquired` CHECK (`created` is null or `acquired` is null or `created` >= `acquired`),
   CONSTRAINT `values_have_dates` CHECK (`value` is null and `value_as_of` is null or `value` is not null and `value_as_of` is not null),
   CONSTRAINT `d1_and_d2` CHECK (`d1` is null and `d2` is null or `d1` is not null and `d2` is not null),
   CONSTRAINT `d3_is_3rd` CHECK (`d3` is null or `d1` is not null and `d2` is not null)
