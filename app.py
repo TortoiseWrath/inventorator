@@ -14,11 +14,9 @@ app.config.from_object(__name__)
 # TODO: Restrict CORS
 CORS(app, resources={r'/*': {'origins': '*'}})
 
-mysql = MySQL(autocommit=True, cursorclass=DictCursor)
 app.config |= db_config
-mysql.init_app(app)
-conn = mysql.connect()
-cursor = conn.cursor()
+app.config['MYSQL_CURSORCLASS'] = 'DictCursor'
+mysql = MySQL(app, autocommit=True)
 
 
 def convert_value(value: object):
@@ -27,7 +25,12 @@ def convert_value(value: object):
     return value
 
 
+def get_cursor():
+    return mysql.connect().cursor(DictCursor)
+
+
 def query(sql: str, *values):
+    cursor = get_cursor()
     cursor.execute(sql, values)
     return [dict((stringcase.camelcase(key), convert_value(value)) for key, value in rows.items()) for rows in
             cursor.fetchall()]
@@ -56,6 +59,7 @@ def update_item(item):
     post_data = request.get_json()
     sql = 'UPDATE items SET parent=%s, title=%s, description=%s, acquired=%s, basis=%s, value=%s, value_as_of=%s, ' \
           'weight=%s, d1=%s, d2=%s, d3=%s, upc=%s WHERE id=%s'
+    cursor = get_cursor()
     cursor.execute(sql, (post_data.get('parent'), post_data.get('title'), post_data.get('description'),
                          post_data.get('acquired'), post_data.get('basis'), post_data.get('value'),
                          post_data.get('valueAsOf'), post_data.get('weight'), post_data.get('d1'),
