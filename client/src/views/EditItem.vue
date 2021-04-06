@@ -44,9 +44,10 @@
       </label>
     </fieldset>
     <label class="upc"><span>UPC</span>
-      <input v-model="item.upc" maxlength="255" pattern="[\d ]+"/>
+      <input v-model="item.upc" maxlength="255" pattern="[0-9 ]+"/>
       <!-- TODO: Add barcode scanner to item editor -->
-    </label></div>
+    </label>
+  </div>
   <div class="buttons">
     <button @click="uploadItem()">Save</button>
     <button @click="navRight()">Add sibling</button>
