@@ -14,36 +14,50 @@ export default defineComponent({
   data() {
     return {
       submitted: 0,
-    }
+    };
   },
   methods: {
-    uploadItem(item: ItemDetails): boolean {
-      console.log(item);
-      fetch(`http://localhost:5000/item/${item.id}`, {
+    async uploadItem(item: ItemDetails) {
+      const response: Response = await fetch(`http://localhost:5000/item/${item.id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify(item),
-      }).then(response => console.log(response));
-      // TODO: handle errors when updating item
-      return true;
+      });
+      if (!response.ok) {
+        const json = await response.json();
+        throw json.error.join(' ');
+      }
+      this.toastSuccess();
     },
     update(item: ItemDetails) {
-      if (!this.uploadItem(item)) return;
-      this.submitted++; // Force a reload of the item editor
+      this.uploadItem(item)
+          .then(() => this.submitted++) // Force a reload of the item editor
+          .catch(this.toastError); // Errors reported by uploadItem
     },
     navRight(item: ItemDetails) {
-      if (!this.uploadItem(item)) return;
-      console.log('navRight');
+      this.uploadItem(item)
+          .then(() => console.log('navRight'))
+          .catch(this.toastError);
     },
     navDown(item: ItemDetails) {
-      if (!this.uploadItem(item)) return;
-      console.log('navDown');
+      this.uploadItem(item)
+          .then(() => console.log('navDown'))
+          .catch(this.toastError);
     },
     navUp(item: ItemDetails) {
-      if (!this.uploadItem(item)) return;
-      console.log('navUp');
+      this.uploadItem(item)
+          .then(() => console.log('navUp'))
+          .catch(this.toastError);
+    },
+    toastError(error: string) {
+      console.error(error);
+      // TODO: Toast error
+    },
+    toastSuccess() {
+      console.log('Updated successfully :)');
+      // TODO: Toast success
     },
   },
 });
