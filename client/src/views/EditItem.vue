@@ -1,5 +1,6 @@
 <template>
-  <item-editor :id="$route.params.id" @upload="uploadItem" @right="navRight" @down="navDown" @up="navUp"/>
+  <item-editor :id="$route.params.id" :key="submitted"
+               @upload="update" @right="navRight" @down="navDown" @up="navUp"/>
 </template>
 
 <script lang="ts">
@@ -10,6 +11,11 @@ import ItemEditor from '@/components/ItemEditor.vue';
 export default defineComponent({
   name: 'EditItem',
   components: {ItemEditor},
+  data() {
+    return {
+      submitted: 0,
+    }
+  },
   methods: {
     uploadItem(item: ItemDetails): boolean {
       console.log(item);
@@ -22,6 +28,10 @@ export default defineComponent({
       }).then(response => console.log(response));
       // TODO: handle errors when updating item
       return true;
+    },
+    update(item: ItemDetails) {
+      if (!this.uploadItem(item)) return;
+      this.submitted++; // Force a reload of the item editor
     },
     navRight(item: ItemDetails) {
       if (!this.uploadItem(item)) return;
