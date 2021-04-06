@@ -3,6 +3,7 @@
     <label class="parent"><span>Parent</span>
       <select v-model="item.parent">
         <!-- TODO: Make a hierarchical item menu -->
+        <!-- TODO: Prevent moving an item to one of its own descendants -->
         <option v-for="item in allItems" :key="item.message" :value="item.id">
           {{ item.title }}
         </option>
@@ -87,16 +88,27 @@ export default defineComponent({
     },
     uploadItem(): boolean {
       console.log('Submit');
-      return false;
+      fetch(`http://localhost:5000/item/${this.item.id}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(this.item),
+      }).then(response => response.json()).then(data => console.log(data));
+      // TODO: handle errors when updating item
+      return true;
     },
     navRight() {
-      this.uploadItem() && console.log('navRight');
+      if (!this.uploadItem()) return;
+      console.log('navRight');
     },
     navDown() {
-      this.uploadItem() && console.log('navDown');
+      if (!this.uploadItem()) return;
+      console.log('navDown');
     },
     navUp() {
-      this.uploadItem() && console.log('navUp');
+      if (!this.uploadItem()) return;
+      console.log('navUp');
     },
   },
   created() {
