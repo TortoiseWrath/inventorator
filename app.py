@@ -1,6 +1,7 @@
 from decimal import Decimal
 
 import stringcase
+from pymysql import DatabaseError, OperationalError
 
 from config import db_config
 from flask import Flask, jsonify, request
@@ -60,11 +61,14 @@ def update_item(item):
     sql = 'UPDATE items SET parent=%s, title=%s, description=%s, acquired=%s, basis=%s, value=%s, value_as_of=%s, ' \
           'weight=%s, d1=%s, d2=%s, d3=%s, upc=%s WHERE id=%s'
     cursor = get_cursor()
-    cursor.execute(sql, (post_data.get('parent'), post_data.get('title'), post_data.get('description'),
-                         post_data.get('acquired'), post_data.get('basis'), post_data.get('value'),
-                         post_data.get('valueAsOf'), post_data.get('weight'), post_data.get('d1'),
-                         post_data.get('d2'), post_data.get('d3'), post_data.get('upc'), item))
-    return "Did it?"
+    try:
+        cursor.execute(sql, (post_data.get('parent'), post_data.get('title'), post_data.get('description'),
+                             post_data.get('acquired'), post_data.get('basis'), post_data.get('value'),
+                             post_data.get('valueAsOf'), post_data.get('weight'), post_data.get('d1'),
+                             post_data.get('d2'), post_data.get('d3'), post_data.get('upc'), item))
+    except DatabaseError as e:
+        return jsonify({'error': e.args}), 400
+    return jsonify({}), 200
 
 
 if __name__ == '__main__':
