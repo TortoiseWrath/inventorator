@@ -74,9 +74,19 @@ def update_item(item):
     try:
         cursor.execute(sql, get_fields(post_data, 'parent', 'title', 'description', 'acquired', 'basis', 'value',
                                        'valueAsOf', 'weight', 'd1', 'd2', 'd3', 'upc', selector=item))
+        add_photos(cursor, item, post_data.get('photos'))
     except DatabaseError as e:
         return jsonify({'error': e.args}), 400
     return jsonify({}), 200
+
+
+def add_photos(cursor, item, photos):
+    if photos is None:
+        return
+    cursor.execute('DELETE FROM photos WHERE item=%s', item)
+    cursor.executemany('INSERT INTO photos VALUES (%s, %s, %s)', [
+        (photo, item, index) for index, photo in photos
+    ])
 
 
 if __name__ == '__main__':

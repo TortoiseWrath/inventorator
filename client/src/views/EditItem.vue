@@ -1,6 +1,7 @@
 <template>
   <item-editor :id="$route.params.id" :key="submitted"
                @upload="update" @right="navRight" @down="navDown" @up="navUp"/>
+  <!-- TODO: Add children list to EditItem view -->
 </template>
 
 <script lang="ts">
