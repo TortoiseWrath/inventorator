@@ -55,6 +55,16 @@ def get_details(item):
     return jsonify({'item': query(sql, item)[0]})
 
 
+def get_fields(post_data, *field_names, selector=None):
+    values = []
+    for field_name in field_names:
+        value = post_data.get(field_name)
+        values.append(None if value == '' else value)
+    if selector is not None:
+        values.append(selector)
+    return tuple(values)
+
+
 @app.route('/item/<item>', methods=['PUT'])
 def update_item(item):
     post_data = request.get_json()
@@ -62,10 +72,8 @@ def update_item(item):
           'weight=%s, d1=%s, d2=%s, d3=%s, upc=%s WHERE id=%s'
     cursor = get_cursor()
     try:
-        cursor.execute(sql, (post_data.get('parent'), post_data.get('title'), post_data.get('description'),
-                             post_data.get('acquired'), post_data.get('basis'), post_data.get('value'),
-                             post_data.get('valueAsOf'), post_data.get('weight'), post_data.get('d1'),
-                             post_data.get('d2'), post_data.get('d3'), post_data.get('upc'), item))
+        cursor.execute(sql, get_fields(post_data, 'parent', 'title', 'description', 'acquired', 'basis', 'value',
+                                       'valueAsOf', 'weight', 'd1', 'd2', 'd3', 'upc', selector=item))
     except DatabaseError as e:
         return jsonify({'error': e.args}), 400
     return jsonify({}), 200

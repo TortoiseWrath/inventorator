@@ -42,6 +42,7 @@
       <label><span>H</span>
         <input v-model="item.d3" maxlength="11" pattern="\d*(\.\d*)?"/>
       </label>
+      <div>Volume: {{ item.d1 * item.d2 * item.d3 || ''}}</div> <!-- TODO: Use a computed property for volume -->
     </fieldset>
     <label class="upc"><span>UPC</span>
       <input v-model="item.upc" maxlength="255" pattern="[0-9 ]+"/>
@@ -58,7 +59,6 @@
     <p>Item created: {{ item.created }}</p>
     <p>Last modified: {{ item.modified }}</p>
   </aside>
-  Volume: {{ item.volume }} <!-- Test what happens to this after submitting -->
   <!-- TODO: Add photos to item editor -->
   <!-- TODO: Add links to item editor -->
 </template>
