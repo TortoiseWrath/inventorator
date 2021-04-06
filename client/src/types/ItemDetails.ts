@@ -4,15 +4,15 @@ import {Item} from '@/types/Item';
 
 export interface ItemDetails extends Item {
     description?: string,
-    acquired?: Date,
+    acquired?: string,
     basis?: Decimal,
-    valueAsOf?: Date,
+    valueAsOf?: string,
     upc?: string,
     d1?: Decimal,
     d2?: Decimal,
     d3?: Decimal,
     photos?: string[],
     links?: Link[],
-    created: Date,
-    modified: Date,
+    created: string,
+    modified: string,
 }
