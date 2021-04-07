@@ -7,6 +7,7 @@
 import {defineComponent} from 'vue';
 import {ItemDetails} from '@/types/ItemDetails';
 import ItemEditor from '@/components/ItemEditor.vue';
+import {useToast} from 'vue-toastification';
 
 export default defineComponent({
   name: 'AddItem',
@@ -14,6 +15,7 @@ export default defineComponent({
   data() {
     return {
       submitted: 0,
+      toast: useToast(),
     };
   },
   methods: {
@@ -29,56 +31,40 @@ export default defineComponent({
       if (!response.ok) {
         throw json.error.join(' ');
       }
-      this.toastSuccess(`Added item ${json.id}`);
+      this.toast.success(`Added item ${json.id}`, {timeout: 500});
       return json.id;
     },
     update(item: ItemDetails) {
       this.uploadItem(item)
           .then((id: string) => this.$router.push(`/item/${id}`))
-          .catch(this.toastError); // Errors reported by uploadItem
+          .catch(this.toast.error); // Errors reported by uploadItem
       // TODO: Handle 500 error separately when adding item
     },
     navRight(item: ItemDetails) {
       if (this.isEmpty(item)) {
         // Don't bother adding an empty item
-        this.toastWarning('Item is empty', 2);
+        this.toast.warning('Item is empty', {timeout: 1000});
       } else {
         this.uploadItem(item)
             .then((id: string) => this.submitted++) // Force reload -> new item, same parent
-            .catch(this.toastError);
+            .catch(this.toast.error);
       }
     },
     navDown(item: ItemDetails) {
       this.uploadItem(item)
           .then((id: string) => this.$router.push(`/add/${id}`))
-          .catch(this.toastError);
+          .catch(this.toast.error);
     },
     navUp(item: ItemDetails) {
       if (this.isEmpty(item)) {
         // Don't bother adding an empty item.
-        this.toastNotice('Ignoring empty item', 1);
+        this.toast.info('Ignoring empty item', {timeout: 500});
         this.$router.push(`/item/${item.parent}`);
       } else {
         this.uploadItem(item)
             .then((id: string) => this.$router.push(`/item/${item.parent}`))
-            .catch(this.toastError);
+            .catch(this.toast.error);
       }
-    },
-    toastError(message: string, duration = 5) {
-      console.error(message);
-      // TODO: Toast error
-    },
-    toastSuccess(message: string, duration = 1) {
-      console.log(message);
-      // TODO: Toast success
-    },
-    toastNotice(message: string, duration = 5) {
-      console.log(message);
-      // TODO: Toast notice
-    },
-    toastWarning(message: string, duration = 2) {
-      console.warn(message);
-      // TODO: Toast warning
     },
     isEmpty(item: ItemDetails) {
       return !item.photos?.length && !item.links?.length && !item.title && !item.description && !item.upc;
