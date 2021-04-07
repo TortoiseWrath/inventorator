@@ -5,10 +5,17 @@
       <camera @photo="addPhoto" @barcode="(upc) => item.upc = upc"/>
       <draggable v-model="item.photos">
         <div v-for="(path, key) in item.photos" :key="key">
-          <thumbnail :path="path" :key="key" @destroy="item.photos.splice(key, 1)" @enlarge="enlargedPhoto = key"/>
+          <thumbnail :path="path" :key="key"
+                     @enlarge="enlargedPhoto = key" @delete="photoToDelete = key"/>
           <!-- TODO: Separate thumbnail-sized images -->
         </div>
       </draggable>
+      <modal v-if="photoToDelete !== null" @cancel="photoToDelete = null" @confirm="deletePhoto">
+        Are you sure you want to delete this image?
+        <br>
+        <img :src="`http://localhost:5000/photo/${item.photos[photoToDelete]}`"
+             class="delete" alt="${item.photos[photoToDelete]}"/>
+      </modal>
       <!-- TODO: Enlarged photo carousel modal -->
     </div>
     <div class="details">
@@ -85,6 +92,8 @@ import DateStringSelector from '@/components/DateStringSelector.vue';
 import Camera from '@/components/Camera.vue';
 import {VueDraggableNext} from 'vue-draggable-next';
 import Thumbnail from '@/components/Thumbnail.vue';
+import Modal from '@/components/Modal.vue';
+import {useToast} from 'vue-toastification';
 
 export default defineComponent({
   name: 'ItemEditor',
@@ -92,7 +101,9 @@ export default defineComponent({
     return {
       item: {parent: this.parent ? parseInt(this.parent) : 2} as ItemDetails,
       allItems: [] as Item[],
-      enlargedPhoto: null as number|null,
+      enlargedPhoto: null as number | null,
+      photoToDelete: null as number | null,
+      toast: useToast(),
     };
   },
   components: {
@@ -101,6 +112,7 @@ export default defineComponent({
     // FontAwesomeIcon,
     DateStringSelector,
     draggable: VueDraggableNext,
+    Modal,
   },
   props: {
     id: String,
@@ -153,6 +165,29 @@ export default defineComponent({
     modal(path: string) {
       console.log('Show modal for ' + path);
     },
+    async deletePhoto() {
+      if (this.photoToDelete === null || !this.item?.photos || !this.item.photos[this.photoToDelete]) {
+        this.toast.error('Tried to delete nothing?');
+        return;
+      }
+      try {
+        const response: Response = await fetch(
+            `http://localhost:5000/photo/${this.item.photos[this.photoToDelete]}`, {method: 'DELETE'});
+        const json = await response.json();
+        if (!response.ok) {
+          console.error(response);
+          console.error(json);
+          this.toast.error(json.error.join(' '));
+        } else {
+          this.toast.info('Deleted photo', {timeout: 1000});
+          this.item.photos.splice(this.photoToDelete, 1);
+          this.photoToDelete = null;
+        }
+      } catch (e) {
+        console.error(e);
+        this.toast.error(e.message);
+      }
+    },
   },
   created() {
     this.load();
@@ -165,4 +200,9 @@ export default defineComponent({
 
 <style scoped lang="scss">
 // TODO: Style the item editor
+img.delete {
+  max-width: calc(100vw - 5em);
+  max-height: calc(100vw - 5em);
+  margin-top: 1em;
+}
 </style>
