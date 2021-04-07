@@ -51,7 +51,7 @@ def all_items():
     return jsonify({'items': query(sql)})
 
 
-@app.route('/details/<item>', methods=['GET'])
+@app.route('/item/<item>', methods=['GET'])
 def get_details(item):
     sql = 'SELECT * FROM items WHERE id=%s'
     details = query(sql, item)[0]
@@ -134,27 +134,29 @@ def add_photo():
     return jsonify({'path': file_path})
 
 
-@app.route('/photo/<path>', methods=['GET', 'DELETE'])
-def get_or_delete_photo(path):
-    if request.method == 'GET':
-        # TODO: Serve photos with another web server
-        return send_from_directory('photos', path)
-    else:
-        # TODO: Prevent deleting ../app.py, etc.
-        try:
-            os.remove('photos/' + path)
-        except FileNotFoundError as e:
-            return jsonify({'error': e.args}), 400
-        except Exception as e:
-            return jsonify({'error': e.args}), 500
+@app.route('/photo/<path>', methods=['GET'])
+def get_photo(path):
+    # TODO: Serve photos with another web server
+    return send_from_directory('photos', path)
 
-        try:
-            cursor = get_cursor()
-            cursor.execute('DELETE FROM photos WHERE path=%s', path)
-        except DatabaseError as e:
-            return jsonify({'error': e.args}), 500
 
-        return jsonify({}), 200
+@app.route('/photo/<path>', methods=['DELETE'])
+def delete_photo(path):
+    # TODO: Prevent deleting ../app.py, etc.
+    try:
+        os.remove('photos/' + path)
+    except FileNotFoundError as e:
+        return jsonify({'error': e.args}), 400
+    except Exception as e:
+        return jsonify({'error': e.args}), 500
+
+    try:
+        cursor = get_cursor()
+        cursor.execute('DELETE FROM photos WHERE path=%s', path)
+    except DatabaseError as e:
+        return jsonify({'error': e.args}), 500
+
+    return jsonify({}), 200
 
 
 def get_photos(item):

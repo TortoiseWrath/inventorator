@@ -121,7 +121,7 @@ export default defineComponent({
   methods: {
     load() {
       if (this.id) {
-        fetch(`http://localhost:5000/details/${this.id}`)
+        fetch(`http://localhost:5000/item/${this.id}`)
             .then(response => response.json())
             .then(data => this.item = data.item);
       }
