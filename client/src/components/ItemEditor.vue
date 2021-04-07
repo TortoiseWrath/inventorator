@@ -1,14 +1,15 @@
 <template>
+  <!-- TODO: Warn when navigating away from an item with unsaved changes -->
   <article>
     <div class="photos">
-      <camera @photo="addPhoto"/>
+      <camera @photo="addPhoto" @barcode="(upc) => item.upc = upc"/>
       <draggable v-model="item.photos">
         <div v-for="(path, key) in item.photos" :key="key">
-          <thumbnail :path="path" :key="key" @destroy="item.photos.splice(key, 1)" @enlarge="console.log(key)"/>
+          <thumbnail :path="path" :key="key" @destroy="item.photos.splice(key, 1)" @enlarge="enlargedPhoto = key"/>
           <!-- TODO: Separate thumbnail-sized images -->
         </div>
       </draggable>
-      <!-- TODO: Enlarged photo modal -->
+      <!-- TODO: Enlarged photo carousel modal -->
     </div>
     <div class="details">
       <label class="parent"><span>Parent</span>
@@ -77,7 +78,7 @@
 
 <script lang="ts">
 import {defineComponent} from 'vue';
-import {FontAwesomeIcon} from '@/plugins/font-awesome';
+// import {FontAwesomeIcon} from '@/plugins/font-awesome';
 import {ItemDetails} from '@/types/ItemDetails';
 import {Item} from '@/types/Item';
 import DateStringSelector from '@/components/DateStringSelector.vue';
@@ -91,6 +92,7 @@ export default defineComponent({
     return {
       item: {parent: this.parent ? parseInt(this.parent) : 2} as ItemDetails,
       allItems: [] as Item[],
+      enlargedPhoto: null as number|null,
     };
   },
   components: {

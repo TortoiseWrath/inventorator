@@ -80,7 +80,7 @@ export default defineComponent({
   },
   emits: {
     deletedChildren(count: number, value: string|undefined) {
-      return count > 0;
+      return count > 0 && (value || !value);
     },
   },
   components: {
