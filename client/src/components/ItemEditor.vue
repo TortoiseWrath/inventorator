@@ -4,13 +4,15 @@
     <div class="photos">
       <camera :photoShortcut="photoShortcut" :barcodeShortcut="barcodeShortcut"
               @photo="addPhoto" @barcode="(upc) => item.upc = upc"/>
-      <draggable v-model="item.photos">
-        <div v-for="(path, key) in item.photos" :key="key">
-          <thumbnail :path="path" :key="key"
-                     @enlarge="enlargedPhoto = key" @delete="photoToDelete = key"/>
-          <!-- TODO: Separate thumbnail-sized images -->
-        </div>
-      </draggable>
+      <div class="gallery">
+        <draggable v-model="item.photos">
+          <div v-for="(path, key) in item.photos" :key="key" class="thumbnail">
+            <thumbnail :path="path" :key="key"
+                       @enlarge="enlargedPhoto = key" @delete="photoToDelete = key"/>
+            <!-- TODO: Separate thumbnail-sized images -->
+          </div>
+        </draggable>
+      </div>
       <modal v-if="photoToDelete !== null" @cancel="photoToDelete = null" @confirm="deletePhoto">
         Are you sure you want to delete this image?
         <br>
@@ -336,12 +338,23 @@ div.rhs {
     button {
       font-size: 150%;
       margin: 0.2rem 0;
-      padding: 0.2em;
+      padding: 0.2em 0.5em;
     }
   }
 
   aside {
     font-size: 70%;
+  }
+}
+
+.gallery > * {
+  background-color: $debug-background;
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+
+  .thumbnail {
+    margin: 0.3rem;
   }
 }
 </style>
