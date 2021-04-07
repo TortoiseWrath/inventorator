@@ -2,31 +2,28 @@
   <div>
     <video autoplay disablePictureInPicture ref="video"/>
     <button @click="takePhoto">Take Photo</button>
-    <button @click="startScan">Scan Barcode</button>
+    <button @click="scanBarcode">Scan Barcode</button>
     <div ref="target"/>
+    <img class="barcode" ref="barcodeImage"/>
   </div>
 </template>
 
 <script lang="ts">
 import {defineComponent} from 'vue';
 import {useToast} from 'vue-toastification';
-import {BrowserMultiFormatReader, NotFoundException} from '@zxing/library';
-import Result from '@zxing/library/esm/core/Result';
-import Exception from '@zxing/library/esm/core/Exception';
+import {BrowserMultiFormatReader, NotFoundException, Result} from '@zxing/library';
 
 export default defineComponent({
   name: 'Camera',
   data() {
     return {
       toast: useToast(),
-      video: {} as HTMLVideoElement,
-      stream: {} as MediaStream,
-      scanningToast: null as string | number | null,
+      track: {} as MediaStreamTrack,
       scanner: new BrowserMultiFormatReader(),
     };
   },
   mounted() {
-    this.video = this.$refs.video as HTMLVideoElement;
+    const video = this.$refs.video as HTMLVideoElement;
     if (navigator.mediaDevices.getUserMedia) {
       navigator.mediaDevices.getUserMedia({
         video: {
@@ -35,8 +32,8 @@ export default defineComponent({
         },
       })
           .then(stream => {
-            this.video.srcObject = stream;
-            this.stream = stream;
+            video.srcObject = stream;
+            this.track = stream.getVideoTracks()[0];
           })
           .catch(e => console.error(e));
     }
@@ -53,7 +50,7 @@ export default defineComponent({
     async capturePhoto(): Promise<Blob> {
       // TODO: Webcam fallback for Firefox
       // TODO: Use photoSettings once it's supported somewhere
-      const imageCapture = new ImageCapture(this.stream.getVideoTracks()[0]);
+      const imageCapture = new ImageCapture(this.track);
       return imageCapture.takePhoto();
     },
     async uploadPhoto(blob: Blob) {
@@ -76,37 +73,31 @@ export default defineComponent({
     takePhoto() {
       this.capturePhoto().then((blob) => this.uploadPhoto(blob));
     },
-    startScan() {
-      this.scanningToast = this.toast.info('Scanning barcode', {
-        timeout: false,
-        showCloseButtonOnHover: false,
-        onClose: this.stopScan,
-      });
-      this.scanner.decodeFromStream(this.stream, this.video, this.scanCallback);
-    },
-    stopScan() {
-      console.log('STOPPING');
-      this.scanner.stopContinuousDecode();
-      this.video.srcObject = this.stream;
-    },
-    scanCallback(result: Result, err?: Exception) {
-      if (result) {
+    async startScan() {
+      // TODO: Continuous barcode scanning
+      // TODO: Fix the barcode scanner
+      const image: Blob = await this.capturePhoto();
+      console.log(image);
+      const imageElement = this.$refs.barcodeImage as HTMLImageElement;
+      imageElement.src = window.URL.createObjectURL(image);
+      console.log(imageElement.src);
+      try {
+        const result: Result = await this.scanner.decodeFromImageElement(imageElement);
         console.log(result);
-        this.toast.warning(result);
-      }
-      if (err) {
+        this.toast.info(result);
+      } catch (err) {
         if (err instanceof NotFoundException) {
-          return; // Keep looking
+          this.toast.warning('No barcode detected', {timeout: 1000});
+        } else {
+          console.error(err);
+          this.toast.error(err.message);
         }
-        console.error(err);
-        this.toast.error(err.message);
       }
-      this.stopScan();
-      if (this.scanningToast != null) {
-        this.toast.dismiss(this.scanningToast);
-        this.scanningToast = null;
-      }
+      // this.scanner.reset();
     },
+    scanBarcode() {
+      this.startScan().then();
+    }
   },
 });
 </script>
