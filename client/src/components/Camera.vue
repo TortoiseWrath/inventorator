@@ -1,7 +1,9 @@
 <template>
-  <video autoplay disablePictureInPicture ref="video"/>
-  <button @click="takePhoto">Take Photo</button>
-  <div ref="target"></div>
+  <div>
+    <video autoplay disablePictureInPicture ref="video"/>
+    <button @click="takePhoto">Take Photo</button>
+    <div ref="target"></div>
+  </div>
 </template>
 
 <script lang="ts">
@@ -33,7 +35,7 @@ export default defineComponent({
     }
   },
   emits: {
-    photo(path: string, blob: Blob) {
+    photo(path: string) {
       return !!path;
     },
   },
@@ -45,7 +47,6 @@ export default defineComponent({
       return imageCapture.takePhoto();
     },
     async uploadPhoto(blob: Blob) {
-      console.log(blob);
       try {
         const response: Response = await fetch(`http://localhost:5000/photo`, {method: 'POST', body: blob});
         const json = await response.json();
@@ -55,7 +56,7 @@ export default defineComponent({
           this.toast.error(json.error.join(' '));
         } else {
           console.log(`Photo uploaded to: ${json.path}`);
-          this.$emit('photo', json.path, blob);
+          this.$emit('photo', json.path);
         }
       } catch (e: any) {
         console.error(e);
