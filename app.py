@@ -84,6 +84,17 @@ def update_item(item):
     return jsonify({}), 200
 
 
+@app.route('/item/<item>', methods=['DELETE'])
+def delete_item(item):
+    sql = 'DELETE FROM items WHERE id=%s'
+    cursor = get_cursor()
+    try:
+        cursor.execute(sql, item)
+    except DatabaseError as e:
+        return jsonify({'error': e.args}), 500
+    return jsonify({}), 200
+
+
 @app.route('/item', methods=['POST'])
 def add_item():
     post_data = request.get_json()

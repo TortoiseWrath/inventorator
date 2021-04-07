@@ -1,6 +1,7 @@
 <template>
   <!-- TODO: Add a transition to the modal -->
-  <div class="container" @keydown.esc="$emit('cancel')" @click.self="$emit('cancel')">
+  <!-- TODO: Add Esc and Enter keybindings -->
+  <div class="container" @click.self="$emit('cancel')">
     <div class="modal">
       <div class="body">
         <slot>
