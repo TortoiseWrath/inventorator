@@ -1,4 +1,7 @@
 <template>
+  <div id="nav">
+    <router-link to="/items">Items</router-link>
+  </div>
   <router-view/>
 </template>
 
