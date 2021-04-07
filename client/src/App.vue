@@ -1,6 +1,8 @@
 <template>
   <div id="nav">
     <router-link to="/items">Items</router-link>
+    |
+    <router-link to="/add/2">Add Item</router-link>
   </div>
   <router-view/>
 </template>
