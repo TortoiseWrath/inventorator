@@ -54,7 +54,9 @@ def all_items():
 @app.route('/details/<item>', methods=['GET'])
 def get_details(item):
     sql = 'SELECT * FROM items WHERE id=%s'
-    return jsonify({'item': query(sql, item)[0]})
+    details = query(sql, item)[0]
+    details['photos'] = get_photos(item)
+    return jsonify({'item': details})
 
 
 def get_fields(post_data, *field_names, selector=None):
@@ -105,7 +107,7 @@ def add_photos(cursor, item, photos):
         return
     cursor.execute('DELETE FROM photos WHERE item=%s', item)
     cursor.executemany('INSERT INTO photos VALUES (%s, %s, %s)', [
-        (photo, item, index) for index, photo in photos
+        (photo, item, index) for index, photo in enumerate(photos)
     ])
 
 
@@ -122,7 +124,7 @@ def add_photo():
 
 
 @app.route('/photo/<path>', methods=['GET', 'DELETE'])
-def photo(path):
+def get_or_delete_photo(path):
     if request.method == 'GET':
         # TODO: Serve photos with another web server
         return send_from_directory('photos', path)
@@ -142,6 +144,11 @@ def photo(path):
             return jsonify({'error': e.args}), 500
 
         return jsonify({}), 200
+
+
+def get_photos(item):
+    sql = 'SELECT * FROM photos WHERE item=%s ORDER BY sort'
+    return [entry['path'] for entry in query(sql, item)]
 
 
 if __name__ == '__main__':

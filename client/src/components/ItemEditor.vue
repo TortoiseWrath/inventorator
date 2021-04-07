@@ -4,10 +4,11 @@
       <camera @photo="addPhoto"/>
       <draggable v-model="item.photos">
         <div v-for="(path, key) in item.photos" :key="key">
-          <thumbnail :path="path" :key="key" @destroy="item.photos.splice(key, 1)"/>
+          <thumbnail :path="path" :key="key" @destroy="item.photos.splice(key, 1)" @enlarge="console.log(key)"/>
           <!-- TODO: Separate thumbnail-sized images -->
         </div>
       </draggable>
+      <!-- TODO: Enlarged photo modal -->
     </div>
     <div class="details">
       <label class="parent"><span>Parent</span>
