@@ -124,4 +124,11 @@ export default defineComponent({
 video {
   width: 100%;
 }
+
+button {
+  font: inherit;
+  font-size: 110%;
+  padding: 0.2em 0.5em;
+  margin: 0.3em 1em;
+}
 </style>
