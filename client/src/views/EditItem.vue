@@ -50,9 +50,13 @@ export default defineComponent({
           .catch(this.toast.error);
     },
     navUp(item: ItemDetails) {
-      this.uploadItem(item)
-          .then(() => this.$router.push(`/item/${item.parent}`))
-          .catch(this.toast.error);
+      if (item.parent && item.parent < 2) {
+        this.toast.error("Already at root!", {timeout: 2000});
+      } else {
+        this.uploadItem(item)
+            .then(() => this.$router.push(`/item/${item.parent}`))
+            .catch(this.toast.error);
+      }
     },
   },
 });

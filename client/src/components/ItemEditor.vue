@@ -1,4 +1,6 @@
 <template>
+  <div class="photos">
+  </div>
   <div class="details">
     <label class="parent"><span>Parent</span>
       <select v-model="item.parent">
@@ -64,7 +66,7 @@
 </template>
 
 <script lang="ts">
-import {defineComponent, ref, onMounted, Ref} from 'vue';
+import {defineComponent} from 'vue';
 import {FontAwesomeIcon} from '@/plugins/font-awesome';
 import {ItemDetails} from '@/types/ItemDetails';
 import {Item} from '@/types/Item';
@@ -72,16 +74,16 @@ import DateStringSelector from '@/components/DateStringSelector.vue';
 
 export default defineComponent({
   name: 'ItemEditor',
-  components: {DateStringSelector},
   data() {
     return {
       item: {parent: this.parent ? parseInt(this.parent) : 2} as ItemDetails,
       allItems: [] as Item[],
     };
   },
-  // components: {
-  //   FontAwesomeIcon,
-  // },
+  components: {
+    // FontAwesomeIcon,
+    DateStringSelector,
+  },
   props: {
     id: String,
     parent: String,
