@@ -20,7 +20,9 @@
     "vue-web-cam": "^1.9.0"
   },
   "devDependencies": {
+    "@types/chrome": "^0.0.134",
     "@types/jest": "^24.0.19",
+    "@types/w3c-image-capture": "^1.0.2",
     "@typescript-eslint/eslint-plugin": "^4.18.0",
     "@typescript-eslint/parser": "^4.18.0",
     "@vue/cli-plugin-babel": "~4.5.0",

@@ -1,5 +1,6 @@
 <template>
   <div class="photos">
+    <camera/>
   </div>
   <div class="details">
     <label class="parent"><span>Parent</span>
@@ -71,6 +72,7 @@ import {FontAwesomeIcon} from '@/plugins/font-awesome';
 import {ItemDetails} from '@/types/ItemDetails';
 import {Item} from '@/types/Item';
 import DateStringSelector from '@/components/DateStringSelector.vue';
+import Camera from '@/components/Camera.vue';
 
 export default defineComponent({
   name: 'ItemEditor',
@@ -81,6 +83,7 @@ export default defineComponent({
     };
   },
   components: {
+    Camera,
     // FontAwesomeIcon,
     DateStringSelector,
   },
