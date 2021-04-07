@@ -1,5 +1,5 @@
 <template>
-  <item-editor :id="$route.params.id" :key="submitted"
+  <item-editor :id="$route.params.id" :key="$route.params.id + ' ' + submitted"
                @upload="update" @right="navRight" @down="navDown" @up="navUp"/>
   <!-- TODO: Add children list to EditItem view -->
 </template>
@@ -39,17 +39,17 @@ export default defineComponent({
     },
     navRight(item: ItemDetails) {
       this.uploadItem(item)
-          .then(() => console.log('navRight'))
+          .then(() => this.$router.push(`/add/${item.parent}`))
           .catch(this.toastError);
     },
     navDown(item: ItemDetails) {
       this.uploadItem(item)
-          .then(() => console.log('navDown'))
+          .then(() => this.$router.push(`/add/${item.id}`))
           .catch(this.toastError);
     },
     navUp(item: ItemDetails) {
       this.uploadItem(item)
-          .then(() => console.log('navUp'))
+          .then(() => this.$router.push(`/item/${item.parent}`))
           .catch(this.toastError);
     },
     toastError(error: string) {

@@ -10,7 +10,7 @@
         <!-- TODO: Add hover transition to buttons -->
         <!-- TODO: Add rotation transition to expand/collapse buttons -->
 
-        <!-- TODO: Add checkboxes -->
+        <!-- TODO: Add checkboxes to items list -->
         <!-- TODO: Add photo preview to items list -->
 
         <div class="title">{{ item.title }}</div>
@@ -31,7 +31,9 @@
         </div>
         <!-- TODO: Show volume details on hovering volume -->
 
-        <font-awesome-icon icon="plus" class="add"/> <!-- TODO: Add children -->
+        <router-link :to="{ path: `/add/${item.id}`}">
+          <font-awesome-icon icon="plus" class="add"/>
+        </router-link>
         <router-link :to="{ path: `/item/${item.id}`}">
           <font-awesome-icon icon="pen" class="edit"/>
         </router-link>
