@@ -75,3 +75,12 @@ Run the Flask server at http://localhost:5000/ with `python app.py`.
 
 Run the Node server at http://localhost:8080/ with `cd client && npm run serve`.
 
+## Usage
+
+Some keyboard shortcuts:
+
+F13 = Scan barcode (doesn't work yet)  
+F14 = Edit parent  
+F15 = Add child  
+F16 = Add sibling  
+F17 = Take photo
