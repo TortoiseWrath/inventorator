@@ -1,8 +1,13 @@
 <template>
   <article>
     <div class="photos">
-      <camera/>
-      <gallery v-model="item.photos"/>
+      <camera @photo="addPhoto"/>
+      <draggable v-model="item.photos">
+        <div v-for="(path, key) in item.photos" :key="key">
+          <thumbnail :path="path" :key="key" @destroy="item.photos.splice(key, 1)"/>
+          <!-- TODO: Separate thumbnail-sized images -->
+        </div>
+      </draggable>
     </div>
     <div class="details">
       <label class="parent"><span>Parent</span>
@@ -76,7 +81,8 @@ import {ItemDetails} from '@/types/ItemDetails';
 import {Item} from '@/types/Item';
 import DateStringSelector from '@/components/DateStringSelector.vue';
 import Camera from '@/components/Camera.vue';
-import Gallery from '@/components/Gallery.vue';
+import {VueDraggableNext} from 'vue-draggable-next';
+import Thumbnail from '@/components/Thumbnail.vue';
 
 export default defineComponent({
   name: 'ItemEditor',
@@ -87,10 +93,11 @@ export default defineComponent({
     };
   },
   components: {
+    Thumbnail,
     Camera,
-    Gallery,
     // FontAwesomeIcon,
     DateStringSelector,
+    draggable: VueDraggableNext,
   },
   props: {
     id: String,
@@ -135,6 +142,13 @@ export default defineComponent({
     focusTitle() {
       const titleInput = this.$refs.title as HTMLInputElement;
       titleInput.focus();
+    },
+    addPhoto(path: string) {
+      this.item.photos ??= [];
+      this.item.photos.push(path);
+    },
+    modal(path: string) {
+      console.log('Show modal for ' + path);
     },
   },
   created() {
