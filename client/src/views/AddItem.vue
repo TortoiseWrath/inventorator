@@ -1,5 +1,5 @@
 <template>
-  <item-editor :parent="$route.params.id"
+  <item-editor :parent="$route.params.id" :key="$route.params.id + ' ' + submitted"
                @upload="update" @right="navRight" @down="navDown" @up="navUp"/>
 </template>
 
@@ -11,6 +11,11 @@ import ItemEditor from '@/components/ItemEditor.vue';
 export default defineComponent({
   name: 'AddItem',
   components: {ItemEditor},
+  data() {
+    return {
+      submitted: 0,
+    };
+  },
   methods: {
     async uploadItem(item: ItemDetails): Promise<string> { // Returns item key
       const response: Response = await fetch(`http://localhost:5000/item`, {
@@ -29,23 +34,23 @@ export default defineComponent({
     },
     update(item: ItemDetails) {
       this.uploadItem(item)
-          .then((id: string) => console.log('Submitted ' + id)) // Force a reload of the item editor
+          .then((id: string) => this.$router.push(`/item/${id}`))
           .catch(this.toastError); // Errors reported by uploadItem
           // TODO: Handle 500 error separately when adding item
     },
     navRight(item: ItemDetails) {
       this.uploadItem(item)
-          .then((id: string) => console.log('navRight ' + id))
+          .then((id: string) => this.submitted++) // Force reload -> new item, same parent
           .catch(this.toastError);
     },
     navDown(item: ItemDetails) {
       this.uploadItem(item)
-          .then((id: string) => console.log('navDown ' + id))
+          .then((id: string) => this.$router.push(`/add/${id}`))
           .catch(this.toastError);
     },
     navUp(item: ItemDetails) {
       this.uploadItem(item)
-          .then((id: string) => console.log('navUp ' + id))
+          .then((id: string) => this.$router.push(`/item/${item.parent}`))
           .catch(this.toastError);
     },
     toastError(error: string) {

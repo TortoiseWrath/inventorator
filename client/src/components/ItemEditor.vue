@@ -10,7 +10,7 @@
       </select>
     </label>
     <label class="title"><span>Title</span>
-      <input v-model="item.title" maxlength="255"/>
+      <input v-model="item.title" maxlength="255" ref="title"/>
     </label>
     <label class="description"><span>Description</span>
       <textarea v-model="item.description" maxlength="65535"/>
@@ -42,7 +42,7 @@
       <label><span>H</span>
         <input v-model="item.d3" maxlength="11" pattern="\d*(\.\d*)?"/>
       </label>
-      <div>Volume: {{ item.d1 * item.d2 * item.d3 || ''}}</div> <!-- TODO: Use a computed property for volume -->
+      <div>Volume: {{ item.d1 * item.d2 * item.d3 || '' }}</div> <!-- TODO: Use a computed property for volume -->
     </fieldset>
     <label class="upc"><span>UPC</span>
       <input v-model="item.upc" maxlength="255" pattern="[0-9 ]+"/>
@@ -64,7 +64,7 @@
 </template>
 
 <script lang="ts">
-import {defineComponent} from 'vue';
+import {defineComponent, ref, onMounted, Ref} from 'vue';
 import {FontAwesomeIcon} from '@/plugins/font-awesome';
 import {ItemDetails} from '@/types/ItemDetails';
 import {Item} from '@/types/Item';
@@ -75,7 +75,7 @@ export default defineComponent({
   components: {DateStringSelector},
   data() {
     return {
-      item: {parent: this.parent ? parseInt(this.parent) : null} as ItemDetails,
+      item: {parent: this.parent ? parseInt(this.parent) : 2} as ItemDetails,
       allItems: [] as Item[],
     };
   },
@@ -122,10 +122,16 @@ export default defineComponent({
     navUp() {
       this.$emit('up', this.item);
     },
+    focusTitle() {
+      const titleInput = this.$refs.title as HTMLInputElement;
+      titleInput.focus();
+    },
   },
   created() {
     this.load();
-    console.log(this.item);
+  },
+  mounted() {
+    this.focusTitle();
   },
 });
 </script>
