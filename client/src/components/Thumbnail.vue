@@ -1,58 +1,24 @@
 <template>
-  <div class="container">
-    <img :src="`http://localhost:5000/photo/${path}`" @click="modal"/>
-    <font-awesome-icon icon="times-circle" class="delete" @click="showModal = true"/>
-    <modal v-if="showModal" @cancel="showModal = false" @confirm="deletePhoto">
-      Are you sure you want to delete this image?
-      <br>
-      <img :src="`http://localhost:5000/photo/${path}`"/>
-    </modal>
+  <div>
+    <div class="container">
+      <img :src="`http://localhost:5000/photo/${path}`" @click="$emit('enlarge')"/>
+      <font-awesome-icon icon="times-circle" class="delete" @click="$emit('delete')"/>
+    </div>
   </div>
 </template>
 
 <script lang="ts">
 import {defineComponent} from 'vue';
 import {FontAwesomeIcon} from '@/plugins/font-awesome';
-import {useToast} from 'vue-toastification';
-import Modal from '@/components/Modal.vue';
 
 export default defineComponent({
   name: 'Thumbnail',
-  emits: ['destroy', 'enlarge'],
+  emits: ['delete', 'enlarge'],
   props: {
     path: String,
   },
   components: {
-    Modal,
     FontAwesomeIcon,
-  },
-  data() {
-    return {
-      toast: useToast(),
-      showModal: false,
-    };
-  },
-  methods: {
-    modal() {
-      this.$emit('enlarge');
-    },
-    async deletePhoto() {
-      try {
-        const response: Response = await fetch(`http://localhost:5000/photo/${this.path}`, {method: 'DELETE'});
-        const json = await response.json();
-        if (!response.ok) {
-          console.error(response);
-          console.error(json);
-          this.toast.error(json.error.join(' '));
-        } else {
-          this.showModal = false;
-          this.$emit('destroy');
-        }
-      } catch (e) {
-        console.error(e);
-        this.toast.error(e.message);
-      }
-    },
   },
 });
 </script>

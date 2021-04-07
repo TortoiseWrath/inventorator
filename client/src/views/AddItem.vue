@@ -31,7 +31,7 @@ export default defineComponent({
       if (!response.ok) {
         throw json.error.join(' ');
       }
-      this.toast.success(`Added item ${json.id}`, {timeout: 500});
+      this.toast.success(`Added item ${json.id}`, {timeout: 1000});
       return json.id;
     },
     update(item: ItemDetails) {
@@ -58,7 +58,7 @@ export default defineComponent({
     navUp(item: ItemDetails) {
       if (this.isEmpty(item)) {
         // Don't bother adding an empty item.
-        this.toast.info('Ignoring empty item', {timeout: 500});
+        this.toast.info('Ignoring empty item', {timeout: 1000});
         this.$router.push(`/item/${item.parent}`);
       } else {
         this.uploadItem(item)
