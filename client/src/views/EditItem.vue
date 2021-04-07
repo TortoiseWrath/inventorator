@@ -8,6 +8,7 @@
 import {defineComponent} from 'vue';
 import {ItemDetails} from '@/types/ItemDetails';
 import ItemEditor from '@/components/ItemEditor.vue';
+import {useToast} from 'vue-toastification';
 
 export default defineComponent({
   name: 'EditItem',
@@ -15,6 +16,7 @@ export default defineComponent({
   data() {
     return {
       submitted: 0,
+      toast: useToast(),
     };
   },
   methods: {
@@ -30,35 +32,27 @@ export default defineComponent({
         const json = await response.json();
         throw json.error.join(' ');
       }
-      this.toastSuccess();
+      this.toast.success(`Updated item ${item.id}`, {timeout: 500});
     },
     update(item: ItemDetails) {
       this.uploadItem(item)
           .then(() => this.submitted++) // Force a reload of the item editor
-          .catch(this.toastError); // Errors reported by uploadItem
+          .catch(this.toast.error); // Errors reported by uploadItem
     },
     navRight(item: ItemDetails) {
       this.uploadItem(item)
           .then(() => this.$router.push(`/add/${item.parent}`))
-          .catch(this.toastError);
+          .catch(this.toast.error);
     },
     navDown(item: ItemDetails) {
       this.uploadItem(item)
           .then(() => this.$router.push(`/add/${item.id}`))
-          .catch(this.toastError);
+          .catch(this.toast.error);
     },
     navUp(item: ItemDetails) {
       this.uploadItem(item)
           .then(() => this.$router.push(`/item/${item.parent}`))
-          .catch(this.toastError);
-    },
-    toastError(error: string) {
-      console.error(error);
-      // TODO: Toast error
-    },
-    toastSuccess() {
-      console.log('Updated successfully :)');
-      // TODO: Toast success
+          .catch(this.toast.error);
     },
   },
 });
