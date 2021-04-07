@@ -78,11 +78,7 @@ export default defineComponent({
       toast: useToast(),
     };
   },
-  emits: {
-    deletedChildren(count: number, value: string|undefined) {
-      return count > 0 && (value || !value);
-    },
-  },
+  emits: ['deletedChildren'],
   components: {
     Modal,
     FontAwesomeIcon,
@@ -129,7 +125,7 @@ export default defineComponent({
         console.error(e);
         this.toast.error(e.message);
       }
-    }
+    },
   },
   created() {
     this.load();
