@@ -33,9 +33,9 @@ export default defineComponent({
     }
   },
   emits: {
-    photo(path: string) {
+    photo(path: string, blob: Blob) {
       return !!path;
-    }
+    },
   },
   methods: {
     async capturePhoto(): Promise<Blob> {
@@ -46,6 +46,21 @@ export default defineComponent({
     },
     async uploadPhoto(blob: Blob) {
       console.log(blob);
+      try {
+        const response: Response = await fetch(`http://localhost:5000/photo`, {method: 'POST', body: blob});
+        const json = await response.json();
+        if (!response.ok) {
+          console.error(response);
+          console.error(json);
+          this.toast.error(json.error.join(' '));
+        } else {
+          console.log(`Photo uploaded to: ${json.path}`);
+          this.$emit('photo', json.path, blob);
+        }
+      } catch (e: any) {
+        console.error(e);
+        this.toast.error(e.message);
+      }
     },
     takePhoto() {
       this.capturePhoto().then((blob) => this.uploadPhoto(blob));
