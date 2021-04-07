@@ -1,69 +1,72 @@
 <template>
-  <div class="photos">
-    <camera/>
-  </div>
-  <div class="details">
-    <label class="parent"><span>Parent</span>
-      <select v-model="item.parent">
-        <!-- TODO: Make a hierarchical item menu -->
-        <!-- TODO: Prevent moving an item to one of its own descendants -->
-        <option v-for="item in allItems" :key="item.message" :value="item.id">
-          {{ item.title }}
-        </option>
-      </select>
-    </label>
-    <label class="title"><span>Title</span>
-      <input v-model="item.title" maxlength="255" ref="title"/>
-    </label>
-    <label class="description"><span>Description</span>
-      <textarea v-model="item.description" maxlength="65535"/>
-    </label>
-    <label class="acquired"><span>Acquired</span>
-      <date-string-selector v-model="item.acquired"/>
-    </label>
-    <label class="basis"><span>Cost basis</span>
-      <input v-model="item.basis" maxlength="11" pattern="\d*(\.\d*)?"/>
-    </label>
-    <label class="value"><span>Value</span>
-      <input v-model="item.value" maxlength="11" pattern="\d*(\.\d*)?"/>
-      <!-- TODO: Allow arithmetic expressions in item editor -->
-    </label>
-    <label class="valueAsOf"><span>as of</span>
-      <date-string-selector v-model="item.valueAsOf"/>
-    </label>
-    <label class="weight"><span>Weight</span>
-      <input v-model="item.weight" maxlength="11" pattern="\d*(\.\d*)?"/>
-    </label>
-    <fieldset class="dimensions">
-      <legend>Dimensions</legend>
-      <label><span>L</span>
-        <input v-model="item.d1" maxlength="11" pattern="\d*(\.\d*)?"/>
+  <article>
+    <div class="photos">
+      <camera/>
+      <gallery v-model="item.photos"/>
+    </div>
+    <div class="details">
+      <label class="parent"><span>Parent</span>
+        <select v-model="item.parent">
+          <!-- TODO: Make a hierarchical item menu -->
+          <!-- TODO: Prevent moving an item to one of its own descendants -->
+          <option v-for="item in allItems" :key="item.message" :value="item.id">
+            {{ item.title }}
+          </option>
+        </select>
       </label>
-      <label><span>W</span>
-        <input v-model="item.d2" maxlength="11" pattern="\d*(\.\d*)?"/>
+      <label class="title"><span>Title</span>
+        <input v-model="item.title" maxlength="255" ref="title"/>
       </label>
-      <label><span>H</span>
-        <input v-model="item.d3" maxlength="11" pattern="\d*(\.\d*)?"/>
+      <label class="description"><span>Description</span>
+        <textarea v-model="item.description" maxlength="65535"/>
       </label>
-      <div>Volume: {{ item.d1 * item.d2 * item.d3 || '' }}</div> <!-- TODO: Use a computed property for volume -->
-    </fieldset>
-    <label class="upc"><span>UPC</span>
-      <input v-model="item.upc" maxlength="255" pattern="[0-9 ]+"/>
-      <!-- TODO: Add barcode scanner to item editor -->
-    </label>
-  </div>
-  <div class="buttons">
-    <button @click="uploadItem()">Save</button>
-    <button @click="navRight()">Add sibling</button>
-    <button @click="navDown()">Add child</button>
-    <button @click="navUp()">Edit parent</button>
-  </div>
-  <aside>
-    <p>Item created: {{ item.created }}</p>
-    <p>Last modified: {{ item.modified }}</p>
-  </aside>
-  <!-- TODO: Add photos to item editor -->
-  <!-- TODO: Add links to item editor -->
+      <label class="acquired"><span>Acquired</span>
+        <date-string-selector v-model="item.acquired"/>
+      </label>
+      <label class="basis"><span>Cost basis</span>
+        <input v-model="item.basis" maxlength="11" pattern="\d*(\.\d*)?"/>
+      </label>
+      <label class="value"><span>Value</span>
+        <input v-model="item.value" maxlength="11" pattern="\d*(\.\d*)?"/>
+        <!-- TODO: Allow arithmetic expressions in item editor -->
+      </label>
+      <label class="valueAsOf"><span>as of</span>
+        <date-string-selector v-model="item.valueAsOf"/>
+      </label>
+      <label class="weight"><span>Weight</span>
+        <input v-model="item.weight" maxlength="11" pattern="\d*(\.\d*)?"/>
+      </label>
+      <fieldset class="dimensions">
+        <legend>Dimensions</legend>
+        <label><span>L</span>
+          <input v-model="item.d1" maxlength="11" pattern="\d*(\.\d*)?"/>
+        </label>
+        <label><span>W</span>
+          <input v-model="item.d2" maxlength="11" pattern="\d*(\.\d*)?"/>
+        </label>
+        <label><span>H</span>
+          <input v-model="item.d3" maxlength="11" pattern="\d*(\.\d*)?"/>
+        </label>
+        <div>Volume: {{ item.d1 * item.d2 * item.d3 || '' }}</div> <!-- TODO: Use a computed property for volume -->
+      </fieldset>
+      <label class="upc"><span>UPC</span>
+        <input v-model="item.upc" maxlength="255" pattern="[0-9 ]+"/>
+        <!-- TODO: Add barcode scanner to item editor -->
+      </label>
+    </div>
+    <div class="buttons">
+      <button @click="uploadItem()">Save</button>
+      <button @click="navRight()">Add sibling</button>
+      <button @click="navDown()">Add child</button>
+      <button @click="navUp()">Edit parent</button>
+    </div>
+    <aside>
+      <p>Item created: {{ item.created }}</p>
+      <p>Last modified: {{ item.modified }}</p>
+    </aside>
+    <!-- TODO: Add photos to item editor -->
+    <!-- TODO: Add links to item editor -->
+  </article>
 </template>
 
 <script lang="ts">
@@ -73,6 +76,7 @@ import {ItemDetails} from '@/types/ItemDetails';
 import {Item} from '@/types/Item';
 import DateStringSelector from '@/components/DateStringSelector.vue';
 import Camera from '@/components/Camera.vue';
+import Gallery from '@/components/Gallery.vue';
 
 export default defineComponent({
   name: 'ItemEditor',
@@ -84,6 +88,7 @@ export default defineComponent({
   },
   components: {
     Camera,
+    Gallery,
     // FontAwesomeIcon,
     DateStringSelector,
   },
@@ -142,5 +147,5 @@ export default defineComponent({
 </script>
 
 <style scoped lang="scss">
-
+// TODO: Style the item editor
 </style>
