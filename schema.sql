@@ -41,7 +41,7 @@ CREATE TABLE `items` (
   `volume` decimal(10,4) unsigned GENERATED ALWAYS AS (`d1` * `d2` * `d3`) STORED COMMENT 'in^3',
   PRIMARY KEY (`id`),
   KEY `items_items_id_fk` (`parent`),
-  CONSTRAINT `items_items_id_fk` FOREIGN KEY (`parent`) REFERENCES `items` (`id`),
+  CONSTRAINT `items_items_id_fk` FOREIGN KEY (`parent`) REFERENCES `items` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `valued_after_acquired` CHECK (`value_as_of` is null or `acquired` is null or `value_as_of` >= `acquired`),
   CONSTRAINT `created_after_acquired` CHECK (`created` is null or `acquired` is null or `created` >= `acquired`),
   CONSTRAINT `values_have_dates` CHECK (`value` is null and `value_as_of` is null or `value` is not null and `value_as_of` is not null),

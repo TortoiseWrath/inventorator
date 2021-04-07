@@ -37,11 +37,28 @@
         <router-link :to="{ path: `/item/${item.id}`}">
           <font-awesome-icon icon="pen" class="edit"/>
         </router-link>
-        <font-awesome-icon icon="trash-alt" class="delete"/> <!-- TODO: Delete item modal -->
+        <font-awesome-icon icon="trash-alt" class="delete" @click="item.showModal = true"/>
         <!-- TODO: Add tooltips to buttons -->
       </div>
-      <item-list v-if="item.expanded != null" v-show="item.expanded" :parent="item.id"/>
+      <item-list v-if="item.expanded != null" v-show="item.expanded" :parent="item.id"
+                 @deletedChildren="(count, value) => {
+                   item.childCount -= count;
+                   if (item.totalValue && value) {
+                     item.totalValue = (parseFloat(item.totalValue) - parseFloat(value)).toString();
+                   }
+                   if (!item.childCount) {
+                     item.expanded = false;
+                   }
+                   $emit('deletedChildren', 0, value);
+                 }"/>
       <!-- TODO: Add transition for show/hide children -->
+      <modal v-if="item.showModal" @cancel="item.showModal = false" @confirm="deleteItem(item, items, index)">
+        Are you sure you want to delete
+        {{
+          (item.title ? item.title : 'item id ' + item.id) +
+          (item.childCount ? ` and its ${item.childCount} ${item.childCount > 1 ? 'children' : 'child'}?` : '?')
+        }}
+      </modal>
     </li>
   </ul>
 </template>
@@ -50,16 +67,24 @@
 import {defineComponent} from 'vue';
 import {FontAwesomeIcon} from '@/plugins/font-awesome';
 import {Item} from '@/types/Item';
-import {Decimal} from '@/types/Decimal';
+import Modal from '@/components/Modal.vue';
+import {useToast} from 'vue-toastification';
 
 export default defineComponent({
   name: 'ItemList',
   data() {
     return {
       items: [] as Item[],
+      toast: useToast(),
     };
   },
+  emits: {
+    deletedChildren(count: number, value: string|undefined) {
+      return count > 0;
+    },
+  },
   components: {
+    Modal,
     FontAwesomeIcon,
   },
   props: {
@@ -82,9 +107,29 @@ export default defineComponent({
             }
           });
     },
-    lt(a: Decimal | null, b: Decimal | null): boolean {
-      return a !== null && b !== null && a.value() < b.value();
+    lt(a: string | null, b: string | null): boolean {
+      return a !== null && b !== null && parseFloat(a) < parseFloat(b);
     },
+    async deleteItem(item: Item, itemArray: Item[], itemIndex: number) {
+      try {
+        const response: Response = await fetch(`http://localhost:5000/item/${item.id}`, {method: 'DELETE'});
+        const json = await response.json();
+        if (!response.ok) {
+          console.error(response);
+          console.error(json);
+          this.toast.error(json.error.join(' '));
+        } else {
+          item.showModal = false;
+          const count = 1;
+          const value = item.totalValue;
+          itemArray.splice(itemIndex, 1);
+          this.$emit('deletedChildren', count, value);
+        }
+      } catch (e) {
+        console.error(e);
+        this.toast.error(e.message);
+      }
+    }
   },
   created() {
     this.load();
