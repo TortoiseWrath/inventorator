@@ -124,8 +124,4 @@ export default defineComponent({
 video {
   width: 100%;
 }
-
-div {
-  max-width: 50%;
-}
 </style>
