@@ -19,68 +19,74 @@
       </modal>
       <!-- TODO: Enlarged photo carousel modal -->
     </div>
-    <div class="details">
-      <label class="parent"><span>Parent</span>
-        <select v-model="item.parent">
-          <!-- TODO: Make a hierarchical item menu -->
-          <!-- TODO: Prevent moving an item to one of its own descendants -->
-          <option v-for="item in allItems" :key="item.message" :value="item.id">
-            {{ item.title }}
-          </option>
-        </select>
-      </label>
-      <label class="title"><span>Title</span>
-        <input v-model="item.title" maxlength="255" ref="title"/>
-      </label>
-      <label class="description"><span>Description</span>
-        <textarea v-model="item.description" maxlength="65535"/>
-      </label>
-      <label class="acquired"><span>Acquired</span>
-        <date-string-selector v-model="item.acquired"/>
-      </label>
-      <label class="basis"><span>Cost basis</span>
-        <input v-model="item.basis" maxlength="11" pattern="\d*(\.\d*)?"/>
-      </label>
-      <label class="value"><span>Value</span>
-        <input v-model="item.value" maxlength="11" pattern="\d*(\.\d*)?"/>
-        <!-- TODO: Allow arithmetic expressions in item editor -->
-      </label>
-      <label class="valueAsOf"><span>as of</span>
-        <date-string-selector v-model="item.valueAsOf"/>
-      </label>
-      <label class="weight"><span>Weight</span>
-        <input v-model="item.weight" maxlength="11" pattern="\d*(\.\d*)?"/>
-      </label>
-      <fieldset class="dimensions">
-        <legend>Dimensions</legend>
-        <label><span>L</span>
-          <input v-model="item.d1" maxlength="11" pattern="\d*(\.\d*)?"/>
+    <div class="rhs">
+      <div class="details">
+        <label class="parent"><span>Parent</span>
+          <select v-model="item.parent">
+            <!-- TODO: Make a hierarchical item menu -->
+            <!-- TODO: Prevent moving an item to one of its own descendants -->
+            <option v-for="item in allItems" :key="item.message" :value="item.id">
+              {{ item.title }}
+            </option>
+          </select>
         </label>
-        <label><span>W</span>
-          <input v-model="item.d2" maxlength="11" pattern="\d*(\.\d*)?"/>
+        <label class="title"><span>Title</span>
+          <input v-model="item.title" maxlength="255" ref="title"/>
         </label>
-        <label><span>H</span>
-          <input v-model="item.d3" maxlength="11" pattern="\d*(\.\d*)?"/>
+        <label class="description"><span>Description</span>
+          <textarea v-model="item.description" maxlength="65535"/>
         </label>
-        <div>Volume: {{ item.d1 * item.d2 * item.d3 || '' }}</div> <!-- TODO: Use a computed property for volume -->
-      </fieldset>
-      <label class="upc"><span>UPC</span>
-        <input v-model="item.upc" maxlength="255" pattern="[0-9 ]+"/>
-        <!-- TODO: Add barcode scanner to item editor -->
-      </label>
+        <div>
+          <label class="acquired"><span>Acquired</span>
+            <date-string-selector v-model="item.acquired"/>
+          </label>
+          <label class="basis"><span>Cost basis</span>
+            <input v-model="item.basis" maxlength="11" pattern="\d*(\.\d*)?"/>
+          </label>
+        </div>
+        <div>
+          <label class="value"><span>Value</span>
+            <input v-model="item.value" maxlength="11" pattern="\d*(\.\d*)?"/>
+            <!-- TODO: Allow arithmetic expressions in item editor -->
+          </label>
+          <label class="valueAsOf"><span>as of</span>
+            <date-string-selector v-model="item.valueAsOf"/>
+          </label>
+        </div>
+        <label class="weight"><span>Weight</span>
+          <input v-model="item.weight" maxlength="11" pattern="\d*(\.\d*)?"/>
+        </label>
+        <fieldset class="dimensions">
+          <legend>Dimensions</legend>
+          <label><span>L</span>
+            <input v-model="item.d1" maxlength="11" pattern="\d*(\.\d*)?"/>
+          </label>
+          <label><span>W</span>
+            <input v-model="item.d2" maxlength="11" pattern="\d*(\.\d*)?"/>
+          </label>
+          <label><span>H</span>
+            <input v-model="item.d3" maxlength="11" pattern="\d*(\.\d*)?"/>
+          </label>
+          <div>Volume: {{ item.d1 * item.d2 * item.d3 || '' }}</div> <!-- TODO: Use a computed property for volume -->
+        </fieldset>
+        <label class="upc"><span>UPC</span>
+          <input v-model="item.upc" maxlength="255" pattern="[0-9 ]+"/>
+          <!-- TODO: Add barcode scanner to item editor -->
+        </label>
+      </div>
+      <div class="buttons">
+        <button @click="uploadItem()">Save</button>
+        <button @click="navRight()">Add sibling</button>
+        <button @click="navDown()">Add child</button>
+        <button @click="navUp()">Edit parent</button>
+      </div>
+      <aside>
+        <p>Item created: {{ item.created }}</p>
+        <p>Last modified: {{ item.modified }}</p>
+      </aside>
+      <!-- TODO: Add photos to item editor -->
+      <!-- TODO: Add links to item editor -->
     </div>
-    <div class="buttons">
-      <button @click="uploadItem()">Save</button>
-      <button @click="navRight()">Add sibling</button>
-      <button @click="navDown()">Add child</button>
-      <button @click="navUp()">Edit parent</button>
-    </div>
-    <aside>
-      <p>Item created: {{ item.created }}</p>
-      <p>Last modified: {{ item.modified }}</p>
-    </aside>
-    <!-- TODO: Add photos to item editor -->
-    <!-- TODO: Add links to item editor -->
   </article>
 </template>
 
@@ -222,10 +228,120 @@ export default defineComponent({
 </script>
 
 <style scoped lang="scss">
-// TODO: Style the item editor
+// TODO: Improve item editor styling
 img.delete {
   max-width: calc(100vw - 5em);
   max-height: calc(100vw - 5em);
   margin-top: 1em;
+}
+
+article {
+  display: flex;
+  width: 100%;
+  justify-content: space-evenly;
+
+  > div {
+    max-width: 50%;
+    width: 6in;
+  }
+}
+
+div.rhs {
+  display: flex;
+  flex-direction: column;
+  margin: 0 1em;
+
+  > div {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .details {
+    label {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 0.4em;
+
+      span {
+        flex-shrink: 0;
+        margin-right: 1em;
+        min-width: 5em;
+      }
+
+      input, textarea, select {
+        width: 100%;
+        padding: 0.3em;
+        font: inherit;
+      }
+
+      textarea {
+        height: 8em;
+      }
+    }
+
+    > div {
+      display: flex;
+
+      label {
+        width: 50%;
+      }
+    }
+
+    .title, .description {
+      span {
+        display: none;
+      }
+    }
+
+    > fieldset {
+      border: none;
+      margin-top: 0.3em;
+      margin-bottom: -0.5em;
+
+      label {
+        display: inline-block;
+        margin-top: 0;
+
+        span {
+          display: none;
+        }
+
+        &:not(:first-of-type):before {
+          content: "x";
+          padding: 0 0.2em;
+        }
+      }
+
+      input {
+        width: 4em;
+      }
+
+      label > span {
+        display: none;
+      }
+
+      > div {
+        // Volume
+        font-size: small;
+      }
+    }
+  }
+
+  .buttons {
+    margin-top: 1em;
+    flex-direction: row;
+    justify-content: space-between;
+
+    button {
+      font-size: 150%;
+      margin: 0.2rem 0;
+      padding: 0.2em;
+    }
+  }
+
+  aside {
+    font-size: 70%;
+  }
 }
 </style>
