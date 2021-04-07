@@ -1,10 +1,12 @@
+import os
+import uuid
 from decimal import Decimal
 
 import stringcase
-from pymysql import DatabaseError, OperationalError
+from pymysql import DatabaseError
 
 from config import db_config
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, request, send_from_directory
 from flask_cors import CORS
 from flaskext.mysql import MySQL
 from pymysql.cursors import DictCursor
@@ -105,6 +107,41 @@ def add_photos(cursor, item, photos):
     cursor.executemany('INSERT INTO photos VALUES (%s, %s, %s)', [
         (photo, item, index) for index, photo in photos
     ])
+
+
+@app.route('/photo', methods=['POST'])
+def add_photo():
+    file_path = uuid.uuid4().hex
+    try:
+        file = open('photos/' + file_path, 'wb')
+        file.write(request.data)
+        file.close()
+    except Exception as e:
+        return jsonify({'error': e.args}), 500
+    return jsonify({'path': file_path})
+
+
+@app.route('/photo/<path>', methods=['GET', 'DELETE'])
+def photo(path):
+    if request.method == 'GET':
+        # TODO: Serve photos with another web server
+        return send_from_directory('photos', path)
+    else:
+        # TODO: Prevent deleting ../app.py, etc.
+        try:
+            os.remove('photos/' + path)
+        except FileNotFoundError as e:
+            return jsonify({'error': e.args}), 400
+        except Exception as e:
+            return jsonify({'error': e.args}), 500
+
+        try:
+            cursor = get_cursor()
+            cursor.execute('DELETE FROM photos WHERE path=%s', path)
+        except DatabaseError as e:
+            return jsonify({'error': e.args}), 500
+
+        return jsonify({}), 200
 
 
 if __name__ == '__main__':
