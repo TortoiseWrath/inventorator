@@ -71,5 +71,10 @@ export default defineComponent({
 </script>
 
 <style scoped lang="scss">
-
+video {
+  width: 100%;
+}
+div {
+  max-width: 50%;
+}
 </style>
