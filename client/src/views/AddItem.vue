@@ -46,7 +46,7 @@ export default defineComponent({
         this.toast.warning('Item is empty', {timeout: 1000});
       } else {
         this.uploadItem(item)
-            .then((id: string) => this.submitted++) // Force reload -> new item, same parent
+            .then(() => this.submitted++) // Force reload -> new item, same parent
             .catch(this.toast.error);
       }
     },
@@ -62,7 +62,7 @@ export default defineComponent({
         this.$router.push(`/item/${item.parent}`);
       } else {
         this.uploadItem(item)
-            .then((id: string) => this.$router.push(`/item/${item.parent}`))
+            .then(() => this.$router.push(`/item/${item.parent}`))
             .catch(this.toast.error);
       }
     },
