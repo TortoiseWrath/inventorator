@@ -1,7 +1,12 @@
 <template>
   <div class="container">
     <img :src="`http://localhost:5000/photo/${path}`" @click="modal"/>
-    <font-awesome-icon icon="times-circle" class="delete" @click="confirmDeletion"/>
+    <font-awesome-icon icon="times-circle" class="delete" @click="showModal = true"/>
+    <modal v-if="showModal" @cancel="showModal = false" @confirm="deletePhoto">
+      Are you sure you want to delete this image?
+      <br>
+      <img :src="`http://localhost:5000/photo/${path}`"/>
+    </modal>
   </div>
 </template>
 
@@ -9,6 +14,7 @@
 import {defineComponent} from 'vue';
 import {FontAwesomeIcon} from '@/plugins/font-awesome';
 import {useToast} from 'vue-toastification';
+import Modal from '@/components/Modal.vue';
 
 export default defineComponent({
   name: 'Thumbnail',
@@ -17,6 +23,7 @@ export default defineComponent({
     path: String,
   },
   components: {
+    Modal,
     FontAwesomeIcon,
   },
   data() {
@@ -38,15 +45,13 @@ export default defineComponent({
           console.error(json);
           this.toast.error(json.error.join(' '));
         } else {
+          this.showModal = false;
           this.$emit('destroy');
         }
       } catch (e) {
         console.error(e);
         this.toast.error(e.message);
       }
-    },
-    confirmDeletion() {
-      this.showModal = true;
     },
   },
 });

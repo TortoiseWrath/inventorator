@@ -38,6 +38,9 @@ export default defineComponent({
     photo(path: string) {
       return !!path;
     },
+    barcode(value: string) {
+      return new RegExp('^[0-9 ]+$').test(value);
+    }
   },
   methods: {
     async capturePhoto(): Promise<Blob> {
