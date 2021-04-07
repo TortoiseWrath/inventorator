@@ -46,6 +46,24 @@ export default defineComponent({
       return new RegExp('^[0-9 ]+$').test(value);
     },
   },
+  props: {
+    photoShortcut: {
+      type: Number,
+      required: false,
+    },
+    barcodeShortcut: {
+      type: Number,
+      required: false,
+    }
+  },
+  watch: {
+    photoShortcut: function() {
+      this.takePhoto();
+    },
+    barcodeShortcut: function() {
+      this.scanBarcode();
+    },
+  },
   methods: {
     async capturePhoto(): Promise<Blob> {
       // TODO: Webcam fallback for Firefox
@@ -97,7 +115,7 @@ export default defineComponent({
     },
     scanBarcode() {
       this.startScan().then();
-    }
+    },
   },
 });
 </script>

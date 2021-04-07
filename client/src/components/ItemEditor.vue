@@ -1,8 +1,9 @@
 <template>
   <!-- TODO: Warn when navigating away from an item with unsaved changes -->
-  <article>
+  <article @keyup="handleKeypress">
     <div class="photos">
-      <camera @photo="addPhoto" @barcode="(upc) => item.upc = upc"/>
+      <camera :photoShortcut="photoShortcut" :barcodeShortcut="barcodeShortcut"
+              @photo="addPhoto" @barcode="(upc) => item.upc = upc"/>
       <draggable v-model="item.photos">
         <div v-for="(path, key) in item.photos" :key="key">
           <thumbnail :path="path" :key="key"
@@ -104,6 +105,8 @@ export default defineComponent({
       enlargedPhoto: null as number | null,
       photoToDelete: null as number | null,
       toast: useToast(),
+      photoShortcut: 0, // Track how many times the photo button has been pressed. Changes -> take photo.
+      barcodeShortcut: 0, // ditto
     };
   },
   components: {
@@ -186,6 +189,26 @@ export default defineComponent({
       } catch (e) {
         console.error(e);
         this.toast.error(e.message);
+      }
+    },
+    handleKeypress(e: KeyboardEvent) {
+      console.log(e);
+      switch (e.code) {
+        case 'F13':
+          this.barcodeShortcut++;
+          break;
+        case 'F14':
+          this.navUp();
+          break;
+        case 'F15':
+          this.navDown();
+          break;
+        case 'F16':
+          this.navRight();
+          break;
+        case 'F17':
+          this.photoShortcut++;
+          break;
       }
     },
   },
