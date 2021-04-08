@@ -38,7 +38,7 @@ export default defineComponent({
       this.uploadItem(item)
           .then((id: string) => this.$router.push(`/item/${id}`))
           .catch(this.toast.error); // Errors reported by uploadItem
-      // TODO: Handle 500 error separately when adding item
+      // @todo Handle 500 error separately when adding item
     },
     navRight(item: ItemDetails) {
       if (this.isEmpty(item)) {
