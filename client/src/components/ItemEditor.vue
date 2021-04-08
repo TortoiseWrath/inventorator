@@ -275,6 +275,10 @@ div.rhs {
         font: inherit;
       }
 
+      &.title input {
+        font-weight: bold;
+      }
+
       textarea {
         height: 8em;
       }

@@ -67,5 +67,11 @@ export default defineComponent({
 </script>
 
 <style scoped lang="scss">
+h2 {
+  display: none;
+}
 
+h2 + * {
+  border-top: 1px solid #ccc;
+}
 </style>
