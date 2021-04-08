@@ -66,8 +66,8 @@ export default defineComponent({
   },
   methods: {
     async capturePhoto(): Promise<Blob> {
-      // TODO: Webcam fallback for Firefox
-      // TODO: Use photoSettings once it's supported somewhere
+      // @todo Webcam fallback for Firefox
+      // @todo Use photoSettings once it's supported somewhere
       const imageCapture = new ImageCapture(this.track);
       return imageCapture.takePhoto();
     },
@@ -92,8 +92,8 @@ export default defineComponent({
       this.capturePhoto().then((blob) => this.uploadPhoto(blob));
     },
     async startScan() {
-      // TODO: Continuous barcode scanning
-      // TODO: Fix the barcode scanner
+      // @todo Continuous barcode scanning
+      // @todo Fix the barcode scanner
       const image: Blob = await this.capturePhoto();
       console.log(image);
       const imageElement = this.$refs.barcodeImage as HTMLImageElement;

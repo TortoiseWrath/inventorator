@@ -58,7 +58,7 @@ div.container {
 
   &:hover .delete {
     opacity: 0.8;
-    // TODO: Add a transition for image delete button
+    // @todo Add a transition for image delete button
   }
 }
 </style>

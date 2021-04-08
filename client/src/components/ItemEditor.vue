@@ -1,5 +1,5 @@
 <template>
-  <!-- TODO: Warn when navigating away from an item with unsaved changes -->
+  <!-- @todo Warn when navigating away from an item with unsaved changes -->
   <article @keyup="handleKeypress">
     <div class="photos">
       <camera :photoShortcut="photoShortcut" :barcodeShortcut="barcodeShortcut"
@@ -9,7 +9,7 @@
           <div v-for="(path, key) in item.photos" :key="key" class="thumbnail">
             <thumbnail :path="path" :key="key"
                        @enlarge="enlargedPhoto = key" @delete="photoToDelete = key"/>
-            <!-- TODO: Separate thumbnail-sized images -->
+            <!-- @todo Separate thumbnail-sized images -->
           </div>
         </draggable>
       </div>
@@ -19,14 +19,14 @@
         <img :src="`http://localhost:5000/photo/${item.photos[photoToDelete]}`"
              class="delete" alt="${item.photos[photoToDelete]}"/>
       </modal>
-      <!-- TODO: Enlarged photo carousel modal -->
+      <!-- @todo Enlarged photo carousel modal -->
     </div>
     <div class="rhs">
       <div class="details">
         <label class="parent"><span>Parent</span>
           <select v-model="item.parent">
-            <!-- TODO: Make a hierarchical item menu -->
-            <!-- TODO: Prevent moving an item to one of its own descendants -->
+            <!-- @todo Make a hierarchical item menu -->
+            <!-- @todo Prevent moving an item to one of its own descendants -->
             <option v-for="item in allItems" :key="item.message" :value="item.id">
               {{ item.title }}
             </option>
@@ -49,7 +49,7 @@
         <div>
           <label class="value"><span>Value</span>
             <input v-model="item.value" maxlength="11" pattern="\d*(\.\d*)?"/>
-            <!-- TODO: Allow arithmetic expressions in item editor -->
+            <!-- @todo Allow arithmetic expressions in item editor -->
           </label>
           <label class="valueAsOf"><span>as of</span>
             <date-string-selector v-model="item.valueAsOf"/>
@@ -69,11 +69,11 @@
           <label><span>H</span>
             <input v-model="item.d3" maxlength="11" pattern="\d*(\.\d*)?"/>
           </label>
-          <div>Volume: {{ item.d1 * item.d2 * item.d3 || '' }}</div> <!-- TODO: Use a computed property for volume -->
+          <div>Volume: {{ item.d1 * item.d2 * item.d3 || '' }}</div> <!-- @todo Use a computed property for volume -->
         </fieldset>
         <label class="upc"><span>UPC</span>
           <input v-model="item.upc" maxlength="255" pattern="[0-9 ]+"/>
-          <!-- TODO: Add barcode scanner to item editor -->
+          <!-- @todo Add barcode scanner to item editor -->
         </label>
       </div>
       <div class="buttons">
@@ -86,8 +86,8 @@
         <p>Item created: {{ item.created }}</p>
         <p>Last modified: {{ item.modified }}</p>
       </aside>
-      <!-- TODO: Add photos to item editor -->
-      <!-- TODO: Add links to item editor -->
+      <!-- @todo Add photos to item editor -->
+      <!-- @todo Add links to item editor -->
     </div>
   </article>
 </template>
@@ -230,7 +230,7 @@ export default defineComponent({
 </script>
 
 <style scoped lang="scss">
-// TODO: Improve item editor styling
+// @todo Improve item editor styling
 img.delete {
   max-width: calc(100vw - 5em);
   max-height: calc(100vw - 5em);

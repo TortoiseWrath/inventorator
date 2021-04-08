@@ -14,7 +14,7 @@ from pymysql.cursors import DictCursor
 app = Flask(__name__)
 app.config.from_object(__name__)
 
-# TODO: Restrict CORS
+# @todo Restrict CORS
 CORS(app, resources={r'/*': {'origins': '*'}})
 
 app.config |= db_config
@@ -136,13 +136,13 @@ def add_photo():
 
 @app.route('/photo/<path>', methods=['GET'])
 def get_photo(path):
-    # TODO: Serve photos with another web server
+    # @todo Serve photos with another web server
     return send_from_directory('photos', path)
 
 
 @app.route('/photo/<path>', methods=['DELETE'])
 def delete_photo(path):
-    # TODO: Prevent deleting ../app.py, etc.
+    # @todo Prevent deleting ../app.py, etc.
     try:
         os.remove('photos/' + path)
     except FileNotFoundError as e:

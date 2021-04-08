@@ -1,6 +1,6 @@
 <template>
-  <!-- TODO: Add a transition to the modal -->
-  <!-- TODO: Add Esc and Enter keybindings -->
+  <!-- @todo Add a transition to the modal -->
+  <!-- @todo Add Esc and Enter keybindings -->
   <div class="container" @click.self="$emit('cancel')">
     <div class="modal">
       <div class="body">
@@ -61,5 +61,5 @@ button {
     color: $danger;
   }
 }
-// TODO: Improve modal styling
+// @todo Improve modal styling
 </style>
