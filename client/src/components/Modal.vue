@@ -37,7 +37,6 @@ div.container {
   display: flex;
   justify-content: center;
   align-items: center;
-
 }
 
 div.modal {
@@ -45,6 +44,8 @@ div.modal {
   padding: 1rem;
   border-radius: 0.5rem;
   border: 1px solid $danger;
+  max-height: calc(100% - 4rem);
+  max-width: calc(100% - 4rem);
 }
 
 div.buttons {
