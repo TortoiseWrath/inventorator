@@ -2,7 +2,8 @@
   <!-- @todo Warn when navigating away from an item with unsaved changes -->
   <article @keyup="handleKeypress">
     <div class="photos">
-      <camera :photoShortcut="photoShortcut" :barcodeShortcut="barcodeShortcut"
+      <camera :photo-shortcut="photoShortcut" :barcode-shortcut="barcodeShortcut"
+              :camera-shortcut="cameraShortcut"
               @photo="addPhoto" @barcode="(upc) => item.upc = upc"/>
       <div class="gallery">
         <draggable v-model="item.photos">
@@ -115,6 +116,7 @@ export default defineComponent({
       toast: useToast(),
       photoShortcut: 0, // Track how many times the photo button has been pressed. Changes -> take photo.
       barcodeShortcut: 0, // ditto
+      cameraShortcut: 0,
     };
   },
   components: {
@@ -225,6 +227,9 @@ export default defineComponent({
         case 'F18':
           this.navSibling();
           break;
+        case 'F19':
+          this.cameraShortcut++;
+          break;
       }
     },
   },
@@ -240,8 +245,8 @@ export default defineComponent({
 <style scoped lang="scss">
 // @todo Improve item editor styling
 img.delete {
-  max-width: calc(100vw - 5em);
-  max-height: calc(100vw - 5em);
+  max-width: calc(100vw - 5rem);
+  max-height: calc(90vh - 10rem);
   margin-top: 1em;
 }
 
@@ -345,11 +350,12 @@ div.rhs {
   .buttons {
     margin-top: 1em;
     flex-direction: row;
-    justify-content: space-between;
+    justify-content: center;
+    flex-wrap: wrap;
 
     button {
-      font-size: 110%;
-      margin: 0.2rem 0;
+      font-size: 100%;
+      margin: 0.2rem;
       padding: 0.2em 0.5em;
       flex-shrink: 1;
       white-space: nowrap;
