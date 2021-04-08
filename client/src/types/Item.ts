@@ -9,6 +9,7 @@ export interface Item {
     totalValue?: string,
     totalWeight?: string,
     totalVolume?: string,
+    photo?: string,
 
     expanded?: boolean, // null at first, then true or false after first expanded
     showModal?: boolean, // null at first, then true or false after first shown

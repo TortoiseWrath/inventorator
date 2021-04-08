@@ -93,7 +93,8 @@ SET character_set_client = utf8;
   `total_value` tinyint NOT NULL,
   `child_count` tinyint NOT NULL,
   `total_weight` tinyint NOT NULL,
-  `total_volume` tinyint NOT NULL
+  `total_volume` tinyint NOT NULL,
+  `photo` varchar(255) NOT NULL,
 ) ENGINE=MyISAM */;
 SET character_set_client = @saved_cs_client;
 
@@ -283,7 +284,7 @@ DELIMITER ;
 /*!50001 SET character_set_results     = utf8mb4 */;
 /*!50001 SET collation_connection      = utf8mb4_general_ci */;
 /*!50001 CREATE ALGORITHM=UNDEFINED */
-/*!50001 VIEW `items_with_sums` AS select `it`.`id` AS `id`,`it`.`parent` AS `parent`,`it`.`title` AS `title`,`it`.`value` AS `value`,`it`.`weight` AS `weight`,`it`.`volume` AS `volume`,`total_value`(`it`.`id`) AS `total_value`,(select count(`items`.`id`) from `items` where `items`.`parent` = `it`.`id`) AS `child_count`,(select sum(`items`.`weight`) from `items` where `items`.`parent` = `it`.`id`) AS `total_weight`,(select sum(`items`.`volume`) from `items` where `items`.`parent` = `it`.`id`) AS `total_volume` from `items` `it` */;
+/*!50001 VIEW `items_with_sums` AS select `it`.`id` AS `id`,`it`.`parent` AS `parent`,`it`.`title` AS `title`,`it`.`value` AS `value`,`it`.`weight` AS `weight`,`it`.`volume` AS `volume`,`total_value`(`it`.`id`) AS `total_value`,(select count(`items`.`id`) from `items` where `items`.`parent` = `it`.`id`) AS `child_count`,(select sum(`items`.`weight`) from `items` where `items`.`parent` = `it`.`id`) AS `total_weight`,(select sum(`items`.`volume`) from `items` where `items`.`parent` = `it`.`id`) AS `total_volume`, `p`.`path` AS `photo` from `items` `it` left join `photos` `p` on `p`.`path` = (select `path` from `photos` p2 where p2.`item` = `it`.`id` order by sort limit 1) */;
 /*!50001 SET character_set_client      = @saved_cs_client */;
 /*!50001 SET character_set_results     = @saved_cs_results */;
 /*!50001 SET collation_connection      = @saved_col_connection */;
