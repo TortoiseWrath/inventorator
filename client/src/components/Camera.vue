@@ -1,6 +1,14 @@
 <template>
   <div>
     <video autoplay disablePictureInPicture ref="video"/>
+    <label v-if="videoDevices.length > 1"><span>Camera</span>
+      <select v-model="videoDevice" @change="startVideo">
+        <option v-for="(videoDevice, index) in videoDevices" :key="index" :value="index">
+          {{ videoDevice.label }}
+        </option>
+      </select>
+      <button @click="nextCamera">Next</button>
+    </label>
     <button @click="takePhoto">Take Photo</button>
     <button @click="scanBarcode">Scan Barcode</button>
     <div ref="target"/>
@@ -20,23 +28,18 @@ export default defineComponent({
       toast: useToast(),
       track: {} as MediaStreamTrack,
       scanner: new BrowserMultiFormatReader(),
+      videoElement: {} as HTMLVideoElement,
+      videoDevices: [] as MediaDeviceInfo[],
+      videoDevice: 0,
     };
   },
   mounted() {
-    const video = this.$refs.video as HTMLVideoElement;
-    if (navigator.mediaDevices.getUserMedia) {
-      navigator.mediaDevices.getUserMedia({
-        video: {
-          width: {ideal: 10000},
-          height: {ideal: 10000},
-        },
-      })
-          .then(stream => {
-            video.srcObject = stream;
-            this.track = stream.getVideoTracks()[0];
-          })
-          .catch(e => console.error(e));
-    }
+    this.videoElement = this.$refs.video as HTMLVideoElement;
+    navigator.mediaDevices.enumerateDevices().then((devices) => devices.forEach((device) => {
+      if (device.kind === 'videoinput') {
+        this.videoDevices.push(device);
+      }
+    })).then(() => this.startVideo());
   },
   emits: {
     photo(path: string) {
@@ -54,14 +57,21 @@ export default defineComponent({
     barcodeShortcut: {
       type: Number,
       required: false,
-    }
+    },
+    cameraShortcut: {
+      type: Number,
+      required: false,
+    },
   },
   watch: {
-    photoShortcut: function() {
+    photoShortcut: function () {
       this.takePhoto();
     },
-    barcodeShortcut: function() {
+    barcodeShortcut: function () {
       this.scanBarcode();
+    },
+    cameraShortcut: function () {
+      this.nextCamera();
     },
   },
   methods: {
@@ -116,6 +126,28 @@ export default defineComponent({
     scanBarcode() {
       this.startScan().then();
     },
+    startVideo() {
+      navigator.mediaDevices.getUserMedia({
+        video: {
+          width: {ideal: 10000},
+          height: {ideal: 10000},
+          deviceId: this.videoDevices[this.videoDevice].deviceId,
+        },
+      })
+          .then(stream => {
+            this.videoElement.srcObject = stream;
+            this.track = stream.getVideoTracks()[0];
+          })
+          .catch(e => console.error(e));
+    },
+    nextCamera() {
+      if (this.videoDevice >= this.videoDevices.length - 1) {
+        this.videoDevice = 0;
+      } else {
+        this.videoDevice++;
+      }
+      this.startVideo();
+    },
   },
 });
 </script>
@@ -130,5 +162,13 @@ button {
   font-size: 110%;
   padding: 0.2em 0.5em;
   margin: 0.3em 1em;
+}
+
+label {
+  display: block;
+
+  span {
+    display: none;
+  }
 }
 </style>
