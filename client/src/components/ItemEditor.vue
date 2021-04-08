@@ -78,6 +78,7 @@
       </div>
       <div class="buttons">
         <button @click="uploadItem()">Save</button>
+        <button v-if="item.id" @click="navSibling()">Next sibling</button>
         <button @click="navRight()">Add sibling</button>
         <button @click="navDown()">Add child</button>
         <button @click="navUp()">Edit parent</button>
@@ -141,6 +142,9 @@ export default defineComponent({
     up(details: ItemDetails) {
       return !!details;
     },
+    next(details: ItemDetails) {
+      return !!details;
+    },
   },
   methods: {
     load() {
@@ -163,6 +167,9 @@ export default defineComponent({
     },
     navUp() {
       this.$emit('up', this.item);
+    },
+    navSibling() {
+      this.$emit('next', this.item);
     },
     focusTitle() {
       const titleInput = this.$refs.title as HTMLInputElement;
@@ -214,6 +221,9 @@ export default defineComponent({
           break;
         case 'F17':
           this.photoShortcut++;
+          break;
+        case 'F18':
+          this.navSibling();
           break;
       }
     },
@@ -334,9 +344,11 @@ div.rhs {
     justify-content: space-between;
 
     button {
-      font-size: 150%;
+      font-size: 110%;
       margin: 0.2rem 0;
       padding: 0.2em 0.5em;
+      flex-shrink: 1;
+      white-space: nowrap;
     }
   }
 

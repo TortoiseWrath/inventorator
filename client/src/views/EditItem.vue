@@ -1,9 +1,9 @@
 <template>
   <item-editor :id="$route.params.id" :key="$route.params.id + ' ' + submitted"
-               @upload="update" @right="navRight" @down="navDown" @up="navUp"/>
+               @upload="update" @right="navRight" @down="navDown" @up="navUp" @next="navNext"/>
   <section>
     <h2>Children</h2>
-    <item-list :parent="parseInt($route.params.id.toString())"/>
+    <item-list :parent="parseInt($route.params.id.toString())" :key="$route.params.id"/>
   </section>
 </template>
 
@@ -61,6 +61,12 @@ export default defineComponent({
             .then(() => this.$router.push(`/item/${item.parent}`))
             .catch(this.toast.error);
       }
+    },
+    navNext(item: ItemDetails) {
+      fetch(`http://localhost:5000/sibling/${item.id}`)
+      .then((response) => response.json())
+      .then((json) => this.$router.push(`/item/${json.id}`))
+      .catch(this.toast.error);
     },
   },
 });

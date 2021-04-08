@@ -164,5 +164,26 @@ def get_photos(item):
     return [entry['path'] for entry in query(sql, item)]
 
 
+@app.route('/sibling/<item>', methods=['GET'])
+def next_sibling(item):
+    try:
+        cursor = get_cursor()
+        # First look for next sibling after this one
+        sql = 'SELECT a.id FROM items a JOIN items b ON a.parent = b.parent WHERE b.id=%s AND a.id>%s ORDER BY id LIMIT 1'
+        cursor.execute(sql, (item, item))
+        rows = cursor.fetchall()
+        if not rows:
+            # Look for first sibling
+            sql = 'SELECT a.id FROM items a JOIN items b ON a.parent = b.parent WHERE b.id=%s ORDER BY id LIMIT 1'
+            cursor.execute(sql, item)
+            rows = cursor.fetchall()
+            if not rows:
+                # No siblings exist
+                return jsonify({'id': item}), 200
+        return jsonify(rows[0]), 200
+    except DatabaseError as e:
+        return jsonify({'error': e.args}), 500
+
+
 if __name__ == '__main__':
     app.run()
