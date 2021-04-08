@@ -4,13 +4,16 @@ A tool for keeping inventory of my belongings (and practicing with Flask and Vue
 
 ## Installation
 
-Tested on Debian.
+Tested on Debian sid.
 
 Install dependencies:
 
 ```shell
-# Install Python and pip
-sudo apt install python3 python3-pip
+# Install dependencies
+sudo apt install curl git python3 python3-pip python3-venv python-is-python3 mariadb-server
+
+# Secure the MariaDB installation
+sudo mysql_secure_installation
 
 # Install node.js
 # See: https://github.com/nvm-sh/nvm#install--update-script
@@ -18,14 +21,6 @@ sudo apt install python3 python3-pip
 curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.38.0/install.sh | zsh
 source ~/.zshrc
 nvm install node
-
-# See: https://github.com/nodesource/distributions/blob/master/README.md#deb
-curl -fsSL https://deb.nodesource.com/setup_current.x | sudo bash -
-sudo apt install nodejs
-
-# Install MariaDB
-sudo apt install mariadb-server
-sudo mysql_secure_installation
 
 # Install Vue CLI
 npm i -g @vue/cli
@@ -53,7 +48,7 @@ git clone https://github.com/TortoiseWrath/inventorator
 cd inventorator
 
 # Create and enter a virtual environment (if desired)
-pip install venv
+python -m venv venv
 source venv/bin/activate
 
 # Install python dependencies
@@ -68,6 +63,7 @@ cd ..
 mysql -u inventorator_flask -p inventorator < schema.sql
 
 # Update the database configuration
+git update-index --assume-unchanged config.py
 $EDITOR config.py
 ```
 
