@@ -10,6 +10,8 @@ from flask import Flask, jsonify, request, send_from_directory
 from flask_cors import CORS
 from flaskext.mysql import MySQL
 from pymysql.cursors import DictCursor
+from pyzbar.pyzbar import decode
+from PIL import Image
 
 app = Flask(__name__)
 app.config.from_object(__name__)
@@ -183,6 +185,24 @@ def next_sibling(item):
         return jsonify(rows[0]), 200
     except DatabaseError as e:
         return jsonify({'error': e.args}), 500
+
+
+# TODO: Client side barcode scanning
+@app.route('/barcode', methods=['POST'])
+def scan_barcode():
+    file_path = uuid.uuid4().hex
+
+    try:
+        file = open('photos/' + file_path, 'wb')
+        file.write(request.data)
+        file.close()
+        barcode = decode(Image.open('photos/' + file_path))
+        print(barcode)
+        os.remove('photos/' + file_path)
+    except Exception as e:
+        return jsonify({'error': e.args}), 500
+
+    return jsonify([b.data.decode('utf-8') for b in barcode])
 
 
 if __name__ == '__main__':

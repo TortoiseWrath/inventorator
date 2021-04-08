@@ -4,7 +4,6 @@
     <button @click="takePhoto">Take Photo</button>
     <button @click="scanBarcode">Scan Barcode</button>
     <div ref="target"/>
-    <img class="barcode" ref="barcodeImage"/>
   </div>
 </template>
 
@@ -54,13 +53,13 @@ export default defineComponent({
     barcodeShortcut: {
       type: Number,
       required: false,
-    }
+    },
   },
   watch: {
-    photoShortcut: function() {
+    photoShortcut: function () {
       this.takePhoto();
     },
-    barcodeShortcut: function() {
+    barcodeShortcut: function () {
       this.scanBarcode();
     },
   },
@@ -91,30 +90,31 @@ export default defineComponent({
     takePhoto() {
       this.capturePhoto().then((blob) => this.uploadPhoto(blob));
     },
-    async startScan() {
-      // @todo Continuous barcode scanning
-      // @todo Fix the barcode scanner
-      const image: Blob = await this.capturePhoto();
-      console.log(image);
-      const imageElement = this.$refs.barcodeImage as HTMLImageElement;
-      imageElement.src = window.URL.createObjectURL(image);
-      console.log(imageElement.src);
+    async readBarcode(blob: Blob) {
       try {
-        const result: Result = await this.scanner.decodeFromImageElement(imageElement);
-        console.log(result);
-        this.toast.info(result);
-      } catch (err) {
-        if (err instanceof NotFoundException) {
-          this.toast.warning('No barcode detected', {timeout: 1000});
+        const response: Response = await fetch(`http://localhost:5000/barcode`, {method: 'POST', body: blob});
+        const json = await response.json();
+        if (!response.ok) {
+          console.error(response);
+          console.error(json);
+          this.toast.error(json.error.join(' '));
         } else {
-          console.error(err);
-          this.toast.error(err.message);
+          console.log(json);
+          if (json.length == 0) {
+            this.toast.warning('Didn\'t find a barcode');
+          } else if (json.length > 1) {
+            this.toast.warning('Found multiple barcodes:<br>' + json.join('<br>'));
+          } else {
+            this.$emit('barcode', json[0]);
+          }
         }
+      } catch (e) {
+        console.error(e);
+        this.toast.error(e.message);
       }
-      // this.scanner.reset();
     },
     scanBarcode() {
-      this.startScan().then();
+      this.capturePhoto().then((blob) => this.readBarcode(blob));
     },
   },
 });

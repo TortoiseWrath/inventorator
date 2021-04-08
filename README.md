@@ -10,7 +10,7 @@ Install dependencies:
 
 ```shell
 # Install dependencies
-sudo apt install curl git python3 python3-pip python3-venv python-is-python3 mariadb-server
+sudo apt install curl git python3 python3-pip python3-venv python-is-python3 mariadb-server libzbar0
 
 # Secure the MariaDB installation
 sudo mysql_secure_installation
