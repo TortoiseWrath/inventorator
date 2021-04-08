@@ -240,8 +240,8 @@ export default defineComponent({
 <style scoped lang="scss">
 // @todo Improve item editor styling
 img.delete {
-  max-width: calc(100vw - 5em);
-  max-height: calc(100vw - 5em);
+  max-width: calc(100vw - 5rem);
+  max-height: calc(90vh - 10rem);
   margin-top: 1em;
 }
 
