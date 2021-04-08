@@ -2,7 +2,8 @@
   <!-- @todo Warn when navigating away from an item with unsaved changes -->
   <article @keyup="handleKeypress">
     <div class="photos">
-      <camera :photoShortcut="photoShortcut" :barcodeShortcut="barcodeShortcut"
+      <camera :photo-shortcut="photoShortcut" :barcode-shortcut="barcodeShortcut"
+              :camera-shortcut="cameraShortcut"
               @photo="addPhoto" @barcode="(upc) => item.upc = upc"/>
       <div class="gallery">
         <draggable v-model="item.photos">
@@ -115,6 +116,7 @@ export default defineComponent({
       toast: useToast(),
       photoShortcut: 0, // Track how many times the photo button has been pressed. Changes -> take photo.
       barcodeShortcut: 0, // ditto
+      cameraShortcut: 0,
     };
   },
   components: {
@@ -224,6 +226,9 @@ export default defineComponent({
           break;
         case 'F18':
           this.navSibling();
+          break;
+        case 'F19':
+          this.cameraShortcut++;
           break;
       }
     },
