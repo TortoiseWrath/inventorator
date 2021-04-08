@@ -1,7 +1,10 @@
 <template>
   <item-editor :id="$route.params.id" :key="$route.params.id + ' ' + submitted"
                @upload="update" @right="navRight" @down="navDown" @up="navUp"/>
-  <!-- @todo Add children list to EditItem view -->
+  <section>
+    <h2>Children</h2>
+    <item-list :parent="parseInt($route.params.id.toString())"/>
+  </section>
 </template>
 
 <script lang="ts">
@@ -9,10 +12,11 @@ import {defineComponent} from 'vue';
 import {ItemDetails} from '@/types/ItemDetails';
 import ItemEditor from '@/components/ItemEditor.vue';
 import {useToast} from 'vue-toastification';
+import ItemList from '@/components/ItemList.vue';
 
 export default defineComponent({
   name: 'EditItem',
-  components: {ItemEditor},
+  components: {ItemList, ItemEditor},
   data() {
     return {
       submitted: 0,
@@ -51,7 +55,7 @@ export default defineComponent({
     },
     navUp(item: ItemDetails) {
       if (item.parent && item.parent < 2) {
-        this.toast.error("Already at root!", {timeout: 2000});
+        this.toast.error('Already at root!', {timeout: 2000});
       } else {
         this.uploadItem(item)
             .then(() => this.$router.push(`/item/${item.parent}`))
