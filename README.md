@@ -80,3 +80,4 @@ F14 = Edit parent
 F15 = Add child  
 F16 = Add sibling  
 F17 = Take photo
+F18 = Next sibling (when editing an existing item)
