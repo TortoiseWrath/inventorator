@@ -35,7 +35,7 @@ Create a database and user at the MySQL prompt (`sudo mysql`):
 
 ```mariadb
 CREATE DATABASE inventorator;
-GRANT ALL ON inventorator.* TO 'inventorator_flask'@'localhost' IDENTIFIED BY 'passw0rd' WITH GRANT OPTION;
+GRANT ALL ON inventorator.* TO inventorator_flask@localhost IDENTIFIED BY 'passw0rd' WITH GRANT OPTION;
 FLUSH PRIVILEGES;
 exit
 ```
@@ -79,5 +79,6 @@ F13 = Scan barcode (doesn't work yet)
 F14 = Edit parent  
 F15 = Add child  
 F16 = Add sibling  
-F17 = Take photo 
-F18 = Next sibling (when editing an existing item)
+F17 = Take photo  
+F18 = Next sibling (when editing an existing item)  
+F19 = Next camera (if you have multiple cameras)  
