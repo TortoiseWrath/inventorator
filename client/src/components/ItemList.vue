@@ -11,7 +11,8 @@
         <!-- @todo Add rotation transition to expand/collapse buttons -->
 
         <!-- @todo Add checkboxes to items list -->
-        <!-- @todo Add photo preview to items list -->
+
+        <img :src="`http://localhost:5000/photo/${item.photo}`" v-if="item.photo" :alt="item.title"/>
 
         <div class="title">{{ item.title }}</div>
       </div>
@@ -163,7 +164,7 @@ ul {
     }
 
     > div {
-      height: 2rem;
+      height: 3rem;
       vertical-align: top;
       display: inline-flex;
       align-items: center;
@@ -198,6 +199,11 @@ ul {
             cursor: pointer;
             color: $hover;
           }
+        }
+
+        img {
+          max-height: calc(100% - 0.3rem);
+          margin-right: 0.3rem;
         }
       }
 
