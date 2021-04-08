@@ -345,11 +345,12 @@ div.rhs {
   .buttons {
     margin-top: 1em;
     flex-direction: row;
-    justify-content: space-between;
+    justify-content: center;
+    flex-wrap: wrap;
 
     button {
-      font-size: 110%;
-      margin: 0.2rem 0;
+      font-size: 100%;
+      margin: 0.2rem;
       padding: 0.2em 0.5em;
       flex-shrink: 1;
       white-space: nowrap;
