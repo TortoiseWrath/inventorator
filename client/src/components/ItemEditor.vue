@@ -199,7 +199,6 @@ export default defineComponent({
       }
     },
     handleKeypress(e: KeyboardEvent) {
-      console.log(e);
       switch (e.code) {
         case 'F13':
           this.barcodeShortcut++;
