@@ -165,6 +165,7 @@ ul {
         margin-bottom: -.3em; // Shift text down slightly to account for space below baseline
         overflow: hidden;
         text-overflow: ellipsis;
+        white-space: nowrap;
       }
 
       > * {
