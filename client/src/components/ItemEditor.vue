@@ -86,7 +86,6 @@
         <p>Item created: {{ item.created }}</p>
         <p>Last modified: {{ item.modified }}</p>
       </aside>
-      <!-- @todo Add photos to item editor -->
       <!-- @todo Add links to item editor -->
     </div>
   </article>
