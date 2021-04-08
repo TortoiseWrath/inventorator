@@ -137,15 +137,15 @@ export default defineComponent({
 $indent: 1em;
 $child-count-width: 4em;
 $decimal-width: 8em;
-$extra-width: 2 * $indent;
-$right-width: 6 * $indent + $extra-width + $child-count-width + 3 * $decimal-width;
+$right-width: 6 * $indent + $child-count-width + 3 * $decimal-width;
+$indent-ratio: 0.67; // Adjust to make the lines look like they line up with the arrows
 // @todo Hide decimals on mobile
 
 ul {
   list-style: none;
   display: inline-block;
   background-color: $debug-background;
-  padding-left: $indent;
+  padding-left: $indent * $indent-ratio;
   width: 100%;
   max-width: 13in;
   box-sizing: border-box;
@@ -154,6 +154,13 @@ ul {
     display: block;
     width: 100%;
     text-align: left;
+    border-left: 1px solid #aaa;
+    box-sizing: border-box;
+    padding-left: $indent * (1 - $indent-ratio);
+
+    &:hover {
+      background-color: #aaa3;
+    }
 
     > div {
       height: 2rem;
