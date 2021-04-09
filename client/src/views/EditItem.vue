@@ -63,10 +63,11 @@ export default defineComponent({
       }
     },
     navNext(item: ItemDetails) {
-      fetch(`http://localhost:5000/sibling/${item.id}`)
-      .then((response) => response.json())
-      .then((json) => this.$router.push(`/item/${json.id}`))
-      .catch(this.toast.error);
+      this.uploadItem(item)
+          .then(() => fetch(`http://localhost:5000/sibling/${item.id}`))
+          .then((response) => response.json())
+          .then((json) => this.$router.push(`/item/${json.id}`))
+          .catch(this.toast.error);
     },
   },
 });
