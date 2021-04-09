@@ -7,11 +7,16 @@
           {{ videoDevice?.label }}
         </option>
       </select>
-<!--      <button @click="nextCamera">Next</button>-->
+      <!--      <button @click="nextCamera">Next</button>-->
     </label>
     <button @click="takePhoto">Take Photo</button>
     <button @click="scanBarcode">Scan Barcode</button>
-    <div ref="target"/>
+    <div class="timer">
+      <label>Timer:
+        <input v-model="timerSeconds" type="number"/>
+             seconds
+      </label>
+    </div>
   </div>
 </template>
 
@@ -30,6 +35,7 @@ export default defineComponent({
       scanner: new BrowserMultiFormatReader(),
       videoElement: {} as HTMLVideoElement,
       state: useState(),
+      timerSeconds: 0,
     };
   },
   mounted() {
@@ -83,8 +89,24 @@ export default defineComponent({
     async capturePhoto(): Promise<Blob> {
       // @todo Webcam fallback for Firefox
       // @todo Use photoSettings once it's supported somewhere
+      await this.timeCapture();
       const imageCapture = new ImageCapture(this.track);
       return imageCapture.takePhoto();
+    },
+    async timeCapture(): Promise<void> {
+      if (this.timerSeconds === 0) {
+        return;
+      }
+      return new Promise((resolve, reject) => {
+        setTimeout(resolve, this.timerSeconds * 1000);
+        this.toast.info('Wait for photo capture', {
+          showCloseButtonOnHover: false,
+          pauseOnHover: false,
+          pauseOnFocusLoss: false,
+          timeout: this.timerSeconds * 1000,
+          onClose: () => reject(), // TODO: Catch rejected promise from canceled photo capture
+        });
+      });
     },
     async uploadPhoto(blob: Blob) {
       try {
@@ -183,5 +205,9 @@ label {
   span {
     display: none;
   }
+}
+
+div.timer input {
+  width: 3em;
 }
 </style>
