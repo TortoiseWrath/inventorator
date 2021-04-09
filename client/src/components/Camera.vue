@@ -7,7 +7,7 @@
           {{ videoDevice?.label }}
         </option>
       </select>
-      <button @click="nextCamera">Next</button>
+<!--      <button @click="nextCamera">Next</button>-->
     </label>
     <button @click="takePhoto">Take Photo</button>
     <button @click="scanBarcode">Scan Barcode</button>
