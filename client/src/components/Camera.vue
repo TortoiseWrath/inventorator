@@ -1,10 +1,10 @@
 <template>
   <div>
     <video autoplay disablePictureInPicture ref="video"/>
-    <label v-if="videoDevices.length > 1"><span>Camera</span>
-      <select v-model="videoDevice" @change="startVideo">
-        <option v-for="(videoDevice, index) in videoDevices" :key="index" :value="index">
-          {{ videoDevice.label }}
+    <label v-if="state.videoDevices?.length > 1"><span>Camera</span>
+      <select v-model="state.videoDevice" @change="startVideo">
+        <option v-for="(videoDevice, index) in state.videoDevices" :key="index" :value="index">
+          {{ videoDevice?.label }}
         </option>
       </select>
       <button @click="nextCamera">Next</button>
@@ -19,6 +19,7 @@
 import {defineComponent} from 'vue';
 import {useToast} from 'vue-toastification';
 import {BrowserMultiFormatReader} from '@zxing/library';
+import {useState} from '@/state';
 
 export default defineComponent({
   name: 'Camera',
@@ -28,17 +29,22 @@ export default defineComponent({
       track: {} as MediaStreamTrack,
       scanner: new BrowserMultiFormatReader(),
       videoElement: {} as HTMLVideoElement,
-      videoDevices: [] as MediaDeviceInfo[],
-      videoDevice: 0,
+      state: useState(),
     };
   },
   mounted() {
     this.videoElement = this.$refs.video as HTMLVideoElement;
-    navigator.mediaDevices.enumerateDevices().then((devices) => devices.forEach((device) => {
-      if (device.kind === 'videoinput') {
-        this.videoDevices.push(device);
-      }
-    })).then(() => this.startVideo());
+    if (!this.state.videoDevice) {
+      this.state.videoDevices = [];
+      this.state.videoDevice = 0;
+      navigator.mediaDevices.enumerateDevices().then((devices) => devices.forEach((device) => {
+        if (device.kind === 'videoinput') {
+          this.state.videoDevices?.push(device);
+        }
+      })).then(() => this.startVideo());
+    } else {
+      this.startVideo();
+    }
   },
   emits: {
     photo(path: string) {
@@ -127,11 +133,15 @@ export default defineComponent({
       this.capturePhoto().then((blob) => this.readBarcode(blob));
     },
     startVideo() {
+      if (this.state.videoDevices === undefined || this.state.videoDevice === undefined) {
+        this.toast.error('No video devices');
+        return;
+      }
       navigator.mediaDevices.getUserMedia({
         video: {
           width: {ideal: 10000},
           height: {ideal: 10000},
-          deviceId: this.videoDevices[this.videoDevice].deviceId,
+          deviceId: this.state.videoDevices[this.state.videoDevice].deviceId,
         },
       })
           .then(stream => {
@@ -141,10 +151,13 @@ export default defineComponent({
           .catch(e => console.error(e));
     },
     nextCamera() {
-      if (this.videoDevice >= this.videoDevices.length - 1) {
-        this.videoDevice = 0;
+      if (this.state.videoDevices === undefined || this.state.videoDevice === undefined) {
+        return;
+      }
+      if (this.state.videoDevice >= this.state.videoDevices.length - 1) {
+        this.state.videoDevice = 0;
       } else {
-        this.videoDevice++;
+        this.state.videoDevice++;
       }
       this.startVideo();
     },
