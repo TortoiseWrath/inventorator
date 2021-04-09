@@ -94,7 +94,7 @@ export default defineComponent({
       return imageCapture.takePhoto();
     },
     async timeCapture(): Promise<void> {
-      if (this.timerSeconds === 0) {
+      if (this.timerSeconds == 0) {
         return;
       }
       return new Promise((resolve, reject) => {
