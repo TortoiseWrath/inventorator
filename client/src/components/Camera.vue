@@ -18,7 +18,7 @@
 <script lang="ts">
 import {defineComponent} from 'vue';
 import {useToast} from 'vue-toastification';
-import {BrowserMultiFormatReader, NotFoundException, Result} from '@zxing/library';
+import {BrowserMultiFormatReader} from '@zxing/library';
 
 export default defineComponent({
   name: 'Camera',
